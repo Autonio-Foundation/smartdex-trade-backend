@@ -1,45 +1,17 @@
-<img src="launch_kit_banner.png">
+This repository is forked from https://github.com/0xProject/0x-launch-kit-frontend
 
 ## Table of contents
 
 -   [Introduction](#introduction)
--   [Language choice](#language-choice)
 -   [Getting started](#getting-started)
 -   [Client for your relayers API](#client-for-your-relayers-api)
 -   [Commands](#commands)
 -   [Database](#database)
 -   [Deployment](#deployment)
--   [Legal Disclaimer](#legal-disclaimer)
 
 ## Introduction
 
-Launch a 0x relayer in under a minute with Launch Kit. This repository contains an open-source, free-to-use 0x relayer template that you can use as a starting point for your own project.
-
--   Quickly launch a market for your community token
--   Seemlessly create an in-game marketplace for digital items and collectibles
--   Enable trading of any ERC-20 or ERC-721 asset
-
-Fork this repository to get started!
-
-### [See website](https://0xproject.com/launch-kit)
-
-## Language choice
-
-`0x-launch-kit` ships with 2 codebases, one in Typescript and another in Javascript. Although the Javascript is auto-generated from the Typescript, we made sure the Javascript generated is readable.
-
-Before you start using `0x-launch-kit`, choose whether you want your codebase to be in Typescript or Javascript.
-
-**If you want to work in Javascript:**
-
--   delete the `ts` directory
--   delete all scripts from `package.json` that end with `:ts`
-
-Note: If you also wish to build and use the Docker image, please update the command in the Dockerfile to `CMD [ "forever", "js/index.js" ]`
-
-**If you want to work in Typescript:**
-
--   delete the `js` directory
--   delete all scripts from `package.json` that end with `:js`
+Autonio Smartdex backend runs as a forked version of 0x relayer
 
 ## Getting started
 
@@ -48,19 +20,17 @@ Note: If you also wish to build and use the Docker image, please update the comm
 -   [Node.js](https://nodejs.org/en/download/) > v8.x
 -   [Yarn](https://yarnpkg.com/en/) > v1.x
 
-To develop ontop of `0x-launch-kit`, follow the following instructions:
+To develop the project, follow the following instructions:
 
 1. Fork this repository
 
 2. Clone your fork of this repository
 
-3. Open the `config.ts`/`config.js` file (depending on the language you've chosen above) and edit the whitelisted tokens:
-
-    - `WHITELISTED_TOKENS` -- Which tokens you would like to host orderbooks for.
+3. Open the `config.ts`/`config.js` file and edit the whitelisted tokens
 
 4. Open the `.env` file and edit the following fields. Defaults are defined in `config.ts`/`config.js`. The bash environment takes precedence over the `.env` file. If you run `source .env`, changes to the `.env` file will have no effect until you unset the colliding variables.
 
-    - `NETWORK_ID` -- the network you'd like your relayer to run on (e.g: `1` -> mainnet, `42` -> Kovan, 3 -> Ropsten, etc...)
+    - `NETWORK_ID` -- the network you'd like your relayer to run on
     - `FEE_RECIPIENT` -- The Ethereum address which should be specified as the fee recipient in orders your relayer accepts. Defaults to a fake address that helps the 0x core team use anonymous, already public data to understand Launch Kit developer usage.
     - `MAKER_FEE_ZRX_UNIT_AMOUNT` -- The flat maker fee you'd like to receive for filled orders hosted by you
     - `TAKER_FEE_ZRX_UNIT_AMOUNT` -- The flat taker fee you'd like to receive for filled orders hosted by you.
@@ -89,9 +59,7 @@ To develop ontop of `0x-launch-kit`, follow the following instructions:
     yarn watch:ts
     ```
 
-    **Note:** There isn't currently a build step when working on the Javascript codebase because we assume `0x-launch-kit` will be running on Node.js > v8.0. If you want this project to work in an environment that doesn't support many of the latest Javascript features, you will need to add a transpiler (e.g [Babel](https://babeljs.io/)) to this project.
-
-8. Start the relayer
+8. Start the backend
 
     ```sh
     yarn start:ts
@@ -103,19 +71,15 @@ To develop ontop of `0x-launch-kit`, follow the following instructions:
     yarn start:js
     ```
 
-## Client for your relayer's API
+## Client for your backend APIs
 
-Since the `0x-launch-kit` relayer adheres to V2 of the [Standard Relayer API Specification](https://github.com/0xProject/standard-relayer-api/), you can use [0x Connect](https://0xproject.com/docs/connect) (an HTTP/Websocket client) to make calls to your relayer (e.g submit an order, get all orders, etc...)
-
-Learn how to use 0x Connect to interact with your `0x-launch-kit` relayer in [this tutorial](https://0xproject.com/wiki#Find,-Submit,-Fill-Order-From-Relayer).
-
-To quickly check if your relayer is up-and-running, send it this CURL request from the command-line:
+To quickly check if your backend (relayer) is up-and-running, send it this CURL request from the command-line:
 
 ```sh
 curl http://localhost:3000/v2/orders
 ```
 
-If everything is working as expected, you should see this response:
+If everything is working as expected, you should see a similar response:
 
 ```
 {
@@ -126,7 +90,7 @@ If everything is working as expected, you should see this response:
 }
 ```
 
-Since no orders have been added to your relayer yet, the `records` array is empty.
+Since no orders have been added to your backend yet, the `records` array is empty.
 
 ## Commands
 
@@ -134,13 +98,13 @@ Typescript project commands:
 
 -   `yarn build:ts` - Build the code
 -   `yarn lint:ts` - Lint the code
--   `yarn start:ts` - Starts the relayer
+-   `yarn start:ts` - Starts the backend
 -   `yarn watch:ts` - Watch the source code and rebuild on change
 -   `yarn prettier:ts` - Auto-format the code
 
 Javascript project commands:
 
--   `yarn start:js` - Start the relayer
+-   `yarn start:js` - Start the backend
 -   `yarn prettier:js` - Auto-format the code
 
 ## Database
@@ -151,7 +115,7 @@ Because we want to support both Javascript and Typescript codebases, we don't us
 
 ## Deployment
 
-`0x-launch-kit` ships as a docker container. First, install Docker ([mac](https://docs.docker.com/docker-for-mac/install/), [windows](https://docs.docker.com/docker-for-windows/install/)). To build the image run:
+The project also comes with a docker container, to build project using docker:
 
 ```sh
 docker build -t 0x-launch-kit .
@@ -175,7 +139,3 @@ Check that it's working by running
 curl http://localhost:3000/v2/asset_pairs
 ```
 
-## Legal Disclaimer
-
-The laws and regulations applicable to the use and exchange of digital assets and blockchain-native tokens, including through any software developed using the licensed work created by ZeroEx Intl. as described here (the “Work”), vary by jurisdiction. As set forth in the Apache License, Version 2.0 applicable to the Work, developers are “solely responsible for determining the appropriateness of using or redistributing the Work,” which includes responsibility for ensuring compliance with any such applicable laws and regulations.
-See the Apache License, Version 2.0 for the specific language governing all applicable permissions and limitations: http://www.apache.org/licenses/LICENSE-2.0
