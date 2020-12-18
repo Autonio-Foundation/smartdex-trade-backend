@@ -117,7 +117,7 @@ export class Handlers {
     public async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
         try {
             const params = JSON.parse(req.body);
-            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params}));
+            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params, dt: new Date()}));
         } catch (err) {
             throw new ValidationError([
                 {
