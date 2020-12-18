@@ -6,11 +6,8 @@ export const maticOHLVCEntity = new EntitySchema<MaticOHLVC>({
     name: 'MaticOHLVC',
     target: MaticOHLVC,
     columns: {
-        hash: {
-            primary: true,
-            type: 'varchar',
-        },
         dt: {
+            primary: true,
             type: 'Date',
         },
         bid: {

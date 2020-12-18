@@ -23,6 +23,7 @@ import {
 } from './config';
 import { MAX_TOKEN_SUPPLY_POSSIBLE } from './constants';
 import { getDBConnection } from './db_connection';
+import { MaticOHLVC } from './models/MaticOHLVC';
 import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
@@ -153,6 +154,10 @@ export class OrderBook {
             const connection = getDBConnection();
             await connection.manager.delete(SignedOrderModel, permanentlyExpiredOrders);
         }
+    }
+    public async addOHLVCAsync(entity: MaticOHLVC): Promise<void> {
+        const connection = getDBConnection();
+        await connection.manager.save(entity);
     }
     public async addOrderAsync(signedOrder: SignedOrder): Promise<void> {
         const connection = getDBConnection();

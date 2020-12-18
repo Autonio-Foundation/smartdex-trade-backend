@@ -74,7 +74,7 @@ export class Handlers {
     }
     public static async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const marketOrder = req.body;
+            await OrderBook.addOHLVCAsync(req.body);
         } catch (err) {
             throw new ValidationError([
                 {
