@@ -57,6 +57,8 @@ import { utils } from './utils';
      */
     app.get('/v2/order/:orderHash', asyncHandler(Handlers.getOrderByHashAsync.bind(Handlers)));
 
+    app.post('/v2/market', asyncHandler(Handlers.submitMarketOrderAsync.bind(Handlers)));
+
     app.use(errorHandler);
 
     app.listen(config.HTTP_PORT, () => {

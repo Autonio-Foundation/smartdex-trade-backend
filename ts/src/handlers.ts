@@ -72,6 +72,20 @@ export class Handlers {
             res.status(HttpStatus.OK).send(orderIfExists);
         }
     }
+    public static async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const marketOrder = req.body;
+        } catch (err) {
+            throw new ValidationError([
+                {
+                    field: 'marketOrder',
+                    code: ValidationErrorCodes.InvalidMarketOrder,
+                    reason: err.message,
+                },
+            ]);
+        }
+        res.status(HttpStatus.OK).send();
+    }
     constructor() {
         this._orderBook = new OrderBook();
     }

@@ -1,4 +1,5 @@
 export class MaticOHLVC {
+    public hash?: string;
     public dt?: Date;
     public bid?: number;
     public ask?: number;
@@ -6,6 +7,7 @@ export class MaticOHLVC {
     public ask_vol?: number;
     constructor(
         opts: {
+            hash?: string;
             dt?: Date;
             bid?: number;
             ask?: number;
@@ -13,6 +15,7 @@ export class MaticOHLVC {
             ask_vol?: number;
         } = {},
     ) {
+        this.hash = opts.hash;
         this.dt = opts.dt;
         this.bid = opts.bid;
         this.ask = opts.ask;
