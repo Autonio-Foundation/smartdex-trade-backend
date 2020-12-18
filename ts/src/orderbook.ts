@@ -155,7 +155,7 @@ export class OrderBook {
             await connection.manager.delete(SignedOrderModel, permanentlyExpiredOrders);
         }
     }
-    public async addOHLVCAsync(entity: MaticOHLVC): Promise<void> {
+    public static async addOHLVCAsync(entity: MaticOHLVC): Promise<void> {
         const connection = getDBConnection();
         await connection.manager.save(entity);
     }
