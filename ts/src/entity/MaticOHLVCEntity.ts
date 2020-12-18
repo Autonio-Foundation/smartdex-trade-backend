@@ -8,7 +8,7 @@ export const maticOHLVCEntity = new EntitySchema<MaticOHLVC>({
     columns: {
         dt: {
             primary: true,
-            type: 'timestamp',
+            type: 'datetime',
         },
         bid: {
             type: 'int',
