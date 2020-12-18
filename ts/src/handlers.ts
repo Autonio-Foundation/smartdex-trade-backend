@@ -123,7 +123,8 @@ export class Handlers {
                 {
                     field: 'marketOrder',
                     code: ValidationErrorCodes.InvalidMarketOrder,
-                    reason: err.message,
+                    // reason: err.message,
+                    reason: req.body,
                 },
             ]);
         }
