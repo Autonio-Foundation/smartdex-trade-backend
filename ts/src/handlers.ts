@@ -17,6 +17,7 @@ import { NotFoundError, ValidationError, ValidationErrorCodes } from './errors';
 import { OrderBook } from './orderbook';
 import { paginate } from './paginator';
 import { utils } from './utils';
+import { MaticOHLVC } from './models/MaticOHLVC';
 
 const parsePaginationConfig = (req: express.Request): { page: number; perPage: number } => {
     const page = req.query.page === undefined ? DEFAULT_PAGE : Number(req.query.page);
@@ -72,20 +73,6 @@ export class Handlers {
             res.status(HttpStatus.OK).send(orderIfExists);
         }
     }
-    public static async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
-        // try {
-        //     await OrderBook.addOHLVCAsync(req.body);
-        // } catch (err) {
-        //     throw new ValidationError([
-        //         {
-        //             field: 'marketOrder',
-        //             code: ValidationErrorCodes.InvalidMarketOrder,
-        //             reason: err.message,
-        //         },
-        //     ]);
-        // }
-        res.status(HttpStatus.OK).send();
-    }
     constructor() {
         this._orderBook = new OrderBook();
     }
@@ -121,6 +108,21 @@ export class Handlers {
                 {
                     field: 'signedOrder',
                     code: ValidationErrorCodes.InvalidOrder,
+                    reason: err.message,
+                },
+            ]);
+        }
+        res.status(HttpStatus.OK).send();
+    }
+    public async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const params = JSON.parse(req.body);
+            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params}));
+        } catch (err) {
+            throw new ValidationError([
+                {
+                    field: 'marketOrder',
+                    code: ValidationErrorCodes.InvalidMarketOrder,
                     reason: err.message,
                 },
             ]);
