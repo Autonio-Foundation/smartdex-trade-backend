@@ -143,7 +143,6 @@ export class Handlers {
                 },
             ]);
         }
-        res.status(HttpStatus.OK).send();
     }
 }
 

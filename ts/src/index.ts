@@ -57,9 +57,10 @@ import { utils } from './utils';
      */
     app.get('/v2/order/:orderHash', asyncHandler(Handlers.getOrderByHashAsync.bind(Handlers)));
 
+    app.get('/v2/history', asyncHandler(handlers.getOHLVCDataAsync.bind(handlers)));
+
     app.post('/v2/market', asyncHandler(handlers.submitMarketOrderAsync.bind(handlers)));
 
-    app.get('/v2/history', asyncHandler(handlers.getOHLVCDataAsync.bind(handlers)));
 
     app.use(errorHandler);
 
