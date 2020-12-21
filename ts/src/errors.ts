@@ -68,5 +68,6 @@ export enum ValidationErrorCodes {
     InvalidSignatureOrHash = 1005,
     UnsupportedOption = 1006,
     InvalidOrder = 1007,
-    InvalidMarketOrder = 1008
+    InvalidMarketOrder = 1008,
+    InvalidOHLVC = 1009
 }

@@ -129,6 +129,22 @@ export class Handlers {
         }
         res.status(HttpStatus.OK).send();
     }
+    public async getOHLVCDataAsync(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const params = req.query;
+            const Data = await this._orderBook.getOHLVCDataAsync(params);
+            res.status(HttpStatus.OK).send(Data);
+        } catch (err) {
+            throw new ValidationError([
+                {
+                    field: 'OHLVC',
+                    code: ValidationErrorCodes.InvalidOHLVC,
+                    reason: err.message,
+                },
+            ]);
+        }
+        res.status(HttpStatus.OK).send();
+    }
 }
 
 // function validateAssetDataIsWhitelistedOrThrow(allowedTokens: string[], assetData: string, field: string): void {

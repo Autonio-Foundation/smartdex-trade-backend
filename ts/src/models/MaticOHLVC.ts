@@ -1,12 +1,12 @@
 export class MaticOHLVC {
-    public dt?: Date;
+    public dt?: number;
     public bid?: number;
     public ask?: number;
     public bid_vol?: number;
     public ask_vol?: number;
     constructor(
         opts: {
-            dt?: Date;
+            dt?: number;
             bid?: number;
             ask?: number;
             bid_vol?: number;

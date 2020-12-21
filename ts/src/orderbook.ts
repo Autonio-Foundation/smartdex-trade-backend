@@ -28,6 +28,22 @@ import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
 
+interface GetOHLVCDataParams {
+    from: number,
+    to: number,
+    interval: number,
+}
+
+
+export class OHLVCData {
+    public time?: number;
+    public low?: number;
+    public high?: number;
+    public open?: number;
+    public close?: number;
+    public volume?: number;
+}
+
 export class OrderBook {
     private readonly _orderWatcher: OrderWatcher;
     private readonly _contractWrappers: ContractWrappers;
@@ -279,6 +295,38 @@ export class OrderBook {
                 await connection.manager.delete(SignedOrderModel, orderHash);
             }
         }
+    }
+    public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
+        var res : Array<OHLVCData> = [];
+        const connection = getDBConnection();
+        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC)) as Array<Required<MaticOHLVC>>;
+        maticOHLVCEntity = maticOHLVCEntity.sort((pa, pb) => {
+            return pa.dt > pb.dt ? 1 : -1;
+        });
+        for (let i: number = params.from; i < params.to ; i += params.interval) {
+            let entities = maticOHLVCEntity.filter(entity => entity.dt >= i && entity.dt < i + params.interval);
+            let newData = new OHLVCData();
+            newData.open = entities[0].bid;
+            newData.close = entities[entities.length - 1].bid;
+            let high = 0;
+            let low = 10000000000000;
+            let volume = 0;
+            entities.forEach(entity => {
+                if (high < entity.bid) {
+                    high = entity.bid;
+                }
+                if (low > entity.bid) {
+                    low = entity.bid;
+                }
+                volume += entity.bid_vol;
+                volume -= entity.ask_vol;
+            })
+            newData.high = high;
+            newData.low = low;
+            newData.volume = volume;
+            res.push(newData);
+        }
+        return res;
     }
 }
 
