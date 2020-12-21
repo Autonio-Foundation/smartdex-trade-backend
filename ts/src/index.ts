@@ -59,7 +59,7 @@ import { utils } from './utils';
 
     app.post('/v2/market', asyncHandler(handlers.submitMarketOrderAsync.bind(handlers)));
 
-    app.post('/v2/history', asyncHandler(handlers.getOHLVCDataAsync.bind(handlers)));
+    app.get('/v2/history', asyncHandler(handlers.getOHLVCDataAsync.bind(handlers)));
 
     app.use(errorHandler);
 
