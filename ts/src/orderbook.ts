@@ -305,26 +305,28 @@ export class OrderBook {
         });
         for (let i: number = params.from; i < params.to ; i += params.interval) {
             let entities = maticOHLVCEntity.filter(entity => entity.dt >= i && entity.dt < i + params.interval);
-            let newData = new OHLVCData();
-            newData.open = entities[0].bid;
-            newData.close = entities[entities.length - 1].bid;
-            let high = 0;
-            let low = 10000000000000;
-            let volume = 0;
-            entities.forEach(entity => {
-                if (high < entity.bid) {
-                    high = entity.bid;
-                }
-                if (low > entity.bid) {
-                    low = entity.bid;
-                }
-                volume += entity.bid_vol;
-                volume -= entity.ask_vol;
-            })
-            newData.high = high;
-            newData.low = low;
-            newData.volume = volume;
-            res.push(newData);
+            if (entities.length > 0) {
+                let newData = new OHLVCData();
+                newData.open = entities[0].bid;
+                newData.close = entities[entities.length - 1].bid;
+                let high = 0;
+                let low = 10000000000000;
+                let volume = 0;
+                entities.forEach(entity => {
+                    if (high < entity.bid) {
+                        high = entity.bid;
+                    }
+                    if (low > entity.bid) {
+                        low = entity.bid;
+                    }
+                    volume += entity.bid_vol;
+                    volume -= entity.ask_vol;
+                })
+                newData.high = high;
+                newData.low = low;
+                newData.volume = volume;
+                res.push(newData);
+            }
         }
         return res;
     }
