@@ -29,9 +29,9 @@ import { paginate } from './paginator';
 import { utils } from './utils';
 
 interface GetOHLVCDataParams {
-    from: number,
-    to: number,
-    interval: number,
+    from: string,
+    to: string,
+    interval: string,
 }
 
 
@@ -302,7 +302,10 @@ export class OrderBook {
         let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC)) as Array<Required<MaticOHLVC>>;
         console.log(maticOHLVCEntity);
         console.log(params);
-        for (var i = params.from ; i < params.to ; i += params.interval) {
+        let params_from = parseFloat(params.from);
+        let params_to = parseFloat(params.to);
+        let params_interval = parseFloat(params.interval);
+        for (var i = params_from ; i < params_to ; i += params_interval) {
             var newData = new OHLVCData();
             newData.open = 0;
             newData.close = 0;
@@ -317,30 +320,35 @@ export class OrderBook {
         let low = 10000000000000;
         let volume = 0;
         maticOHLVCEntity.forEach(entity => {
-            console.log(entity);
-            let id = parseInt(((entity.dt - params.from) / params.interval).toFixed(0));
-            if (curId !== id) {
-                high = entity.bid;
-                low = entity.bid;
-                volume = 0;
+            if (entity.dt >= params_to) {
+                return;
             }
-            if (res[id].open === 0) {
-                res[id].open = entity.bid;
+            if (entity.dt > params_from) {
+                console.log(entity);
+                let id = parseInt(((entity.dt - params_from) / params_interval).toFixed(0));
+                if (curId !== id) {
+                    high = entity.bid;
+                    low = entity.bid;
+                    volume = 0;
+                }
+                if (res[id].open === 0) {
+                    res[id].open = entity.bid;
+                }
+                res[id].close = entity.bid;
+                volume += entity.bid_vol;
+                volume -= entity.ask_vol;
+    
+                if (high < entity.bid) {
+                    high = entity.bid;
+                }
+                if (low > entity.bid) {
+                    low = entity.bid;
+                }
+    
+                res[id].volume = Math.abs(volume);
+                res[id].high = high;
+                res[id].low = low;
             }
-            res[id].close = entity.bid;
-            volume += entity.bid_vol;
-            volume -= entity.ask_vol;
-
-            if (high < entity.bid) {
-                high = entity.bid;
-            }
-            if (low > entity.bid) {
-                low = entity.bid;
-            }
-
-            res[id].volume = Math.abs(volume);
-            res[id].high = high;
-            res[id].low = low;
         })
         return res;
     }
