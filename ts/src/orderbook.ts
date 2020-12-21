@@ -299,7 +299,7 @@ export class OrderBook {
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC, { orderBy: 'dt'})) as Array<Required<MaticOHLVC>>;
+        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC, {order: {name: 'dt', id: 'ASC'}})) as Array<Required<MaticOHLVC>>;
         console.log(maticOHLVCEntity);
         for (let i: number = params.from; i < params.to ; i += params.interval) {
             let newData = new OHLVCData();
