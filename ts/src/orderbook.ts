@@ -301,8 +301,9 @@ export class OrderBook {
         const connection = getDBConnection();
         let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC)) as Array<Required<MaticOHLVC>>;
         console.log(maticOHLVCEntity);
-        for (let i: number = params.from; i < params.to ; i += params.interval) {
-            let newData = new OHLVCData();
+        console.log(params);
+        for (var i = params.from ; i < params.to ; i += params.interval) {
+            var newData = new OHLVCData();
             newData.open = 0;
             newData.close = 0;
             newData.high = 0;
