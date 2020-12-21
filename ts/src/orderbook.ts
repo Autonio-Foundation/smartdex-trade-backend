@@ -299,35 +299,46 @@ export class OrderBook {
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC)) as Array<Required<MaticOHLVC>>;
-        maticOHLVCEntity = maticOHLVCEntity.sort((pa, pb) => {
-            return pa.dt > pb.dt ? 1 : -1;
-        });
+        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC, { orderBy: 'dt'})) as Array<Required<MaticOHLVC>>;
+        console.log(maticOHLVCEntity);
         for (let i: number = params.from; i < params.to ; i += params.interval) {
-            let entities = maticOHLVCEntity.filter(entity => entity.dt >= i && entity.dt < i + params.interval);
-            if (entities.length > 0) {
-                let newData = new OHLVCData();
-                newData.open = entities[0].bid;
-                newData.close = entities[entities.length - 1].bid;
-                let high = 0;
-                let low = 10000000000000;
-                let volume = 0;
-                entities.forEach(entity => {
-                    if (high < entity.bid) {
-                        high = entity.bid;
-                    }
-                    if (low > entity.bid) {
-                        low = entity.bid;
-                    }
-                    volume += entity.bid_vol;
-                    volume -= entity.ask_vol;
-                })
-                newData.high = high;
-                newData.low = low;
-                newData.volume = volume;
-                res.push(newData);
-            }
+            let newData = new OHLVCData();
+            newData.open = 0;
+            newData.close = 0;
+            newData.high = 0;
+            newData.low = 0;
+            newData.volume = 0;
+            res.push(newData);
         }
+        let curId = 0;
+        let high = 0;
+        let low = 10000000000000;
+        let volume = 0;
+        maticOHLVCEntity.forEach(entity => {
+            let id = parseInt(((entity.dt - params.from) / params.interval).toFixed(0));
+            if (curId !== id) {
+                high = entity.bid;
+                low = entity.bid;
+                volume = 0;
+            }
+            if (res[id].open === 0) {
+                res[id].open = entity.bid;
+            }
+            res[id].close = entity.bid;
+            volume += entity.bid_vol;
+            volume -= entity.ask_vol;
+
+            if (high < entity.bid) {
+                high = entity.bid;
+            }
+            if (low > entity.bid) {
+                low = entity.bid;
+            }
+
+            res[id].volume = Math.abs(volume);
+            res[id].high = high;
+            res[id].low = low;
+        })
         return res;
     }
 }
