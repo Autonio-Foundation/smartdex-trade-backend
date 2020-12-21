@@ -307,6 +307,7 @@ export class OrderBook {
         let params_interval = parseFloat(params.interval);
         for (var i = params_from ; i < params_to ; i += params_interval) {
             var newData = new OHLVCData();
+            newData.time = i;
             newData.open = 0;
             newData.close = 0;
             newData.high = 0;
