@@ -310,11 +310,13 @@ export class OrderBook {
             newData.volume = 0;
             res.push(newData);
         }
+        console.log(res);
         let curId = 0;
         let high = 0;
         let low = 10000000000000;
         let volume = 0;
         maticOHLVCEntity.forEach(entity => {
+            console.log(entity);
             let id = parseInt(((entity.dt - params.from) / params.interval).toFixed(0));
             if (curId !== id) {
                 high = entity.bid;
