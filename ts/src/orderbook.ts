@@ -305,7 +305,7 @@ export class OrderBook {
         let params_from = parseFloat(params.from);
         let params_to = parseFloat(params.to);
         let params_interval = parseFloat(params.interval);
-        for (var i = params_from ; i < params_to ; i += params_interval) {
+        for (let i = params_from ; i < params_to ; i += params_interval) {
             var newData = new OHLVCData();
             newData.time = i;
             newData.open = 0;
@@ -355,6 +355,12 @@ export class OrderBook {
                 res[id].low = low;
             }
         })
+        for (let i = curId + 1 ; i < res.length ; i ++) {
+            res[i].open = res[curId].close;
+            res[i].close = res[curId].close;
+            res[i].high = res[curId].close;
+            res[i].low = res[curId].close;
+        }
         return res;
     }
 }
