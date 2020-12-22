@@ -328,13 +328,17 @@ export class OrderBook {
                 console.log(entity);
                 let id = Math.floor((entity.dt - params_from) / params_interval);
                 if (curId != id) {
+                    for(let i = curId + 1 ; i < id ; i ++) {
+                        res[i].open = res[curId].close;
+                        res[i].close = res[curId].close;
+                        res[i].high = res[curId].close;
+                        res[i].low = res[curId].close;
+                    }
+                    res[id].open = res[curId].close;
                     high = entity.bid;
                     low = entity.bid;
                     volume = 0;
                     curId = id;
-                }
-                if (res[id].open === 0) {
-                    res[id].open = entity.bid;
                 }
                 res[id].close = entity.bid;
                 volume = volume + entity.bid_vol + entity.ask_vol;
