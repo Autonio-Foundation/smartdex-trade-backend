@@ -324,19 +324,20 @@ export class OrderBook {
             if (entity.dt >= params_to) {
                 return;
             }
-            if (entity.dt > params_from) {
+            if (entity.dt >= params_from) {
                 console.log(entity);
-                let id = parseInt(((entity.dt - params_from) / params_interval).toFixed(0));
-                if (curId !== id) {
+                let id = Math.floor((entity.dt - params_from) / params_interval);
+                if (curId != id) {
                     high = entity.bid;
                     low = entity.bid;
                     volume = 0;
+                    curId = id;
                 }
                 if (res[id].open === 0) {
                     res[id].open = entity.bid;
                 }
                 res[id].close = entity.bid;
-                volume = volume + parseFloat(entity.bid_vol.toString()) + parseFloat(entity.ask_vol.toString());
+                volume = volume + entity.bid_vol + entity.ask_vol;
 
                 if (high < entity.bid) {
                     high = entity.bid;
