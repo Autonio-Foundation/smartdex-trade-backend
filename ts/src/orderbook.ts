@@ -346,7 +346,7 @@ export class OrderBook {
                     low = entity.bid;
                 }
     
-                res[id].volume = Math.abs(volume);
+                res[id].volume = volume;
                 res[id].high = high;
                 res[id].low = low;
             }
