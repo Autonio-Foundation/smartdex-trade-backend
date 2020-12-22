@@ -336,7 +336,7 @@ export class OrderBook {
                     res[id].open = entity.bid;
                 }
                 res[id].close = entity.bid;
-                volume += entity.bid_vol + entity.ask_vol;
+                volume = volume + parseFloat(entity.bid_vol.toString()) + parseFloat(entity.ask_vol.toString());
 
                 if (high < entity.bid) {
                     high = entity.bid;
