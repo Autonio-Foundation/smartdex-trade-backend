@@ -336,9 +336,8 @@ export class OrderBook {
                     res[id].open = entity.bid;
                 }
                 res[id].close = entity.bid;
-                volume += entity.bid_vol;
-                volume -= entity.ask_vol;
-    
+                volume += entity.bid_vol + entity.ask_vol;
+
                 if (high < entity.bid) {
                     high = entity.bid;
                 }
