@@ -11,6 +11,10 @@ import { Handlers } from './handlers';
 import { errorHandler } from './middleware/error_handling';
 import { urlParamsParsing } from './middleware/url_params_parsing';
 import { utils } from './utils';
+import * as socketio from "socket.io";
+import events from 'events';
+
+export const myEvent = new events();
 
 (async () => {
     await initDBConnectionAsync();
@@ -21,6 +25,16 @@ import { utils } from './utils';
     app.use(bodyParser.json());
     app.use(urlParamsParsing);
 
+    let io = socketio(app);
+
+    io.on("connection", function(socket: any) {
+        console.log("a user connected");
+    });
+
+    myEvent.on('new:order', function(data: any) {
+        io.sockets.emit('m', data);
+    })
+    
     /**
      * GET AssetPairs endpoint retrieves a list of available asset pairs and the information required to trade them.
      * http://sra-spec.s3-website-us-east-1.amazonaws.com/#operation/getAssetPairs

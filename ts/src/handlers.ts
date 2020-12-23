@@ -4,6 +4,7 @@ import { Web3Wrapper } from '@0x/web3-wrapper';
 import * as express from 'express';
 import * as HttpStatus from 'http-status-codes';
 import * as _ from 'lodash';
+import { myEvent } from './index';
 
 import {
     FEE_RECIPIENT,
@@ -117,7 +118,10 @@ export class Handlers {
     public async submitMarketOrderAsync(req: express.Request, res: express.Response): Promise<void> {
         try {
             const params = req.body;
-            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params, dt: new Date()}));
+            const dt = new Date();
+            const data = `0~ ~niox~usdt~ ~ ~${dt.getTime()}~ ~${params.bid}`;
+            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params, dt}));
+            myEvent.emit('new:order', data);
         } catch (err) {
             throw new ValidationError([
                 {
