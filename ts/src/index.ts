@@ -11,10 +11,9 @@ import { Handlers } from './handlers';
 import { errorHandler } from './middleware/error_handling';
 import { urlParamsParsing } from './middleware/url_params_parsing';
 import { utils } from './utils';
-import * as socketio from "socket.io";
-import events from 'events';
+var EventEmitter = require('events')
 
-export const myEvent = new events();
+export const myEvent = new EventEmitter();
 
 (async () => {
     await initDBConnectionAsync();
