@@ -21,14 +21,15 @@ export const myEvent = new events();
     const handlers = new Handlers();
     await handlers.initOrderBookAsync();
     const app = express();
+    let http = require('http').Server(app);
     app.use(cors());
     app.use(bodyParser.json());
     app.use(urlParamsParsing);
 
-    let io = socketio(app);
+    let io = require("socket.io")(http);
 
     io.on("connection", function(socket: any) {
-        console.log("a user connected");
+        console.log("a user connected", socket.id);
     });
 
     myEvent.on('new:order', function(data: any) {
@@ -78,7 +79,7 @@ export const myEvent = new events();
 
     app.use(errorHandler);
 
-    app.listen(config.HTTP_PORT, () => {
+    http.listen(config.HTTP_PORT, () => {
         utils.log(
             `Standard relayer API (HTTP) listening on port ${config.HTTP_PORT}!\nConfig: ${JSON.stringify(
                 config,
