@@ -10,6 +10,12 @@ export const maticOHLVCEntity = new EntitySchema<MaticOHLVC>({
             primary: true,
             type: 'int',
         },
+        base_token: {
+            type: 'varchar'
+        },
+        quote_token: {
+            type: 'varchar'
+        },
         bid: {
             type: 'int',
         },

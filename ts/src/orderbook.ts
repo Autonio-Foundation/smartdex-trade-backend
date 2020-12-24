@@ -29,6 +29,8 @@ import { paginate } from './paginator';
 import { utils } from './utils';
 
 interface GetOHLVCDataParams {
+    base_token: string,
+    quote_token: string,
     from: string,
     to: string,
     interval: string,
@@ -299,9 +301,12 @@ export class OrderBook {
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC)) as Array<Required<MaticOHLVC>>;
-        console.log(maticOHLVCEntity);
-        console.log(params);
+        const filterObjectWithValuesIfExist: Partial<any> = {
+            base_token: params.base_token,
+            quote_token: params.quote_token
+        };
+        const filterObject = _.pickBy(filterObjectWithValuesIfExist, _.identity.bind(_));
+        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC, { where: filterObject })) as Array<Required<MaticOHLVC>>;
         let params_from = parseFloat(params.from);
         let params_to = parseFloat(params.to);
         let params_interval = parseFloat(params.interval);

@@ -119,7 +119,7 @@ export class Handlers {
         try {
             const params = req.body;
             const dt = new Date();
-            const data = `0~ ~niox~usdt~ ~ ~${dt.getTime()}~ ~${params.bid}`;
+            const data = `0~ ~${params.base_token}~${params.quote_token}~ ~ ~${dt.getTime()}~ ~${params.bid}`;
             await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params, dt}));
             myEvent.emit('new:order', data);
         } catch (err) {
