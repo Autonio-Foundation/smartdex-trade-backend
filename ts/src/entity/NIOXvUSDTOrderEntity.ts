@@ -52,5 +52,8 @@ export const NIOXvUSDTOrderEntity = new EntitySchema<NIOXvUSDTOrder>({
         signature: {
             type: 'varchar',
         },
+        status: {
+            type: 'varchar'
+        }
     },
 });

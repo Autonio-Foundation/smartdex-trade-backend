@@ -150,7 +150,7 @@ export class Handlers {
     public async getOrderHistoryAsync(req: express.Request, res: express.Response): Promise<void> {
         try {
             const params = req.query;
-            const Data = await this._orderBook.getOHLVCDataAsync(params);
+            const Data = await this._orderBook.getOrderHistoryAsync(params);
             res.status(HttpStatus.OK).send(Data);
         } catch (err) {
             throw new ValidationError([

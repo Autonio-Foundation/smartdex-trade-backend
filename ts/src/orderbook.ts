@@ -161,6 +161,18 @@ export class OrderBook {
             const state = orderState as OrderState;
             if (!state.isValid) {
                 this._shadowedOrders.set(state.orderHash, Date.now());
+                if (state.error === 'ORDER_CANCELLED') {
+                    // Cancelled Order
+                    this.addOrderHistoryAsync(state.orderHash,'Cancelled');
+                }
+                else if (state.error === 'ORDER_FILL_AMOUNT_ZERO') {
+                    // Executed
+                    this.addOrderHistoryAsync(state.orderHash,'Executed');
+                }
+                else {
+                    // Error
+                    this.addOrderHistoryAsync(state.orderHash,'Error');
+                }
             } else {
                 this._shadowedOrders.delete(state.orderHash);
             }
@@ -315,6 +327,21 @@ export class OrderBook {
             } catch (err) {
                 const orderHash = orderHashUtils.getOrderHashHex(signedOrder);
                 await connection.manager.delete(SignedOrderModel, orderHash);
+            }
+        }
+    }
+    public async addOrderHistoryAsync(orderHash: string, status: string): Promise<void> {
+        const orderByHash = await OrderBook.getOrderByHashIfExistsAsync(orderHash);
+        if (orderByHash !== undefined) {
+            const { order } = orderByHash;
+            const connection = getDBConnection();
+            if (order.makerAssetData === 'niox' && order.takerAssetData === 'usdt') {
+                // NIOX/USDT pair
+                await connection.manager.save(new NIOXvUSDTOrder({...order, status: status, hash: orderHash}));
+            }
+            else if (order.makerAssetData === 'wmatic' && order.takerAssetData === 'usdt') {
+                // WMATIC/USDT pair
+                await connection.manager.save(new WMATICvUSDTOrder({...order, status: status, hash: orderHash}));
             }
         }
     }

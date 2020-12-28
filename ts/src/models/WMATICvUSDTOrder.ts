@@ -14,6 +14,7 @@ export class WMATICvUSDTOrder {
     public takerAssetAmount?: string;
     public salt?: string;
     public signature?: string;
+    public status?: string;
     constructor(
         opts: {
             hash?: string;
@@ -31,6 +32,7 @@ export class WMATICvUSDTOrder {
             takerAssetAmount?: string;
             salt?: string;
             signature?: string;
+            status?: string;
         } = {},
     ) {
         this.hash = opts.hash;
@@ -48,5 +50,6 @@ export class WMATICvUSDTOrder {
         this.takerAssetAmount = opts.takerAssetAmount;
         this.salt = opts.salt;
         this.signature = opts.signature;
+        this.status = opts.status;
     }
 }

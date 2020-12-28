@@ -52,5 +52,8 @@ export const WMATICvUSDTOrderEntity = new EntitySchema<WMATICvUSDTOrder>({
         signature: {
             type: 'varchar',
         },
+        status: {
+            type: 'varchar'
+        }
     },
 });
