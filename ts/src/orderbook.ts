@@ -335,13 +335,27 @@ export class OrderBook {
         if (orderByHash !== undefined) {
             const { order } = orderByHash;
             const connection = getDBConnection();
+            const serializedOrder = {
+                ...order,
+                hash: orderHash,
+                status: status,
+                makerFee: order.makerFee.toString(),
+                takerFee: order.takerFee.toString(),
+                makerAssetAmount: order.makerAssetAmount.toString(),
+                takerAssetAmount: order.takerAssetAmount.toString(),
+                salt: order.salt.toString(),
+                exchangeAddress: order.exchangeAddress,
+                feeRecipientAddress: order.feeRecipientAddress,
+                expirationTimeSeconds: order.expirationTimeSeconds.toNumber(),
+        
+            }
             if (order.makerAssetData === 'niox' && order.takerAssetData === 'usdt') {
                 // NIOX/USDT pair
-                await connection.manager.save(new NIOXvUSDTOrder({...order, status: status, hash: orderHash, expirationTimeSeconds: order.expirationTimeSeconds.toNumber()}));
+                await connection.manager.save(new NIOXvUSDTOrder(serializedOrder));
             }
             else if (order.makerAssetData === 'wmatic' && order.takerAssetData === 'usdt') {
                 // WMATIC/USDT pair
-                await connection.manager.save(new WMATICvUSDTOrder({...order, status: status, hash: orderHash, expirationTimeSeconds: order.expirationTimeSeconds.toNumber()}));
+                await connection.manager.save(new WMATICvUSDTOrder(serializedOrder));
             }
         }
     }
