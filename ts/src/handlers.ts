@@ -18,7 +18,6 @@ import { NotFoundError, ValidationError, ValidationErrorCodes } from './errors';
 import { OrderBook } from './orderbook';
 import { paginate } from './paginator';
 import { utils } from './utils';
-import { MaticOHLVC } from './models/MaticOHLVC';
 
 const parsePaginationConfig = (req: express.Request): { page: number; perPage: number } => {
     const page = req.query.page === undefined ? DEFAULT_PAGE : Number(req.query.page);
@@ -120,7 +119,7 @@ export class Handlers {
             const params = req.body;
             const dt = new Date();
             const data = `0~ ~${params.base_token}~${params.quote_token}~ ~ ~${dt.getTime()}~ ~${params.bid}`;
-            await this._orderBook.addOHLVCAsync(new MaticOHLVC({...params, dt}));
+            await this._orderBook.addOHLVCAsync({...params, dt});
             myEvent.emit('new:order', data);
         } catch (err) {
             throw new ValidationError([
@@ -143,6 +142,21 @@ export class Handlers {
                 {
                     field: 'OHLVC',
                     code: ValidationErrorCodes.InvalidOHLVC,
+                    reason: err.message,
+                },
+            ]);
+        }
+    }
+    public async getOrderHistoryAsync(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const params = req.query;
+            const Data = await this._orderBook.getOHLVCDataAsync(params);
+            res.status(HttpStatus.OK).send(Data);
+        } catch (err) {
+            throw new ValidationError([
+                {
+                    field: 'Order History',
+                    code: ValidationErrorCodes.InvalidOrder,
                     reason: err.message,
                 },
             ]);

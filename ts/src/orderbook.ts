@@ -23,7 +23,10 @@ import {
 } from './config';
 import { MAX_TOKEN_SUPPLY_POSSIBLE } from './constants';
 import { getDBConnection } from './db_connection';
-import { MaticOHLVC } from './models/MaticOHLVC';
+import { NIOXvUSDTOHLVC } from './models/NIOXvUSDTOHLVC';
+import { NIOXvUSDTOrder } from './models/NIOXvUSDTOrder';
+import { WMATICvUSDTOHLVC } from './models/WMATICvUSDTOHLVC';
+import { WMATICvUSDTOrder } from './models/WMATICvUSDTOrder';
 import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
@@ -36,6 +39,11 @@ interface GetOHLVCDataParams {
     interval: string,
 }
 
+interface GetOrderHistoryParams {
+    base_token: string,
+    quote_token: string,
+    address: string
+}
 
 export class OHLVCData {
     public time?: number;
@@ -173,9 +181,21 @@ export class OrderBook {
             await connection.manager.delete(SignedOrderModel, permanentlyExpiredOrders);
         }
     }
-    public async addOHLVCAsync(entity: MaticOHLVC): Promise<void> {
+    public async addOHLVCAsync(entity: any): Promise<void> {
         const connection = getDBConnection();
-        await connection.manager.save(entity);
+        const params = {
+            dt: entity.dt,
+            bid: entity.bid,
+            ask: entity.bid,
+            bid_vol: entity.bid_vol,
+            ask_vol: entity.ask_vol,
+        };
+        if (entity.base_token === 'niox' && entity.quote_token === 'usdt') {
+            await connection.manager.save(new NIOXvUSDTOHLVC(params));
+        }
+        else if (entity.base_token === 'wmatic' && entity.quote_token === 'usdt') {
+            await connection.manager.save(new WMATICvUSDTOHLVC(params));
+        }
     }
     public async addOrderAsync(signedOrder: SignedOrder): Promise<void> {
         const connection = getDBConnection();
@@ -298,15 +318,27 @@ export class OrderBook {
             }
         }
     }
+    public async getOrderHistoryAsync(params: GetOrderHistoryParams): Promise<Array<any>> {
+        var res : Array<any> = [];
+        const connection = getDBConnection();
+        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
+            res = (await connection.manager.find(NIOXvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+        }
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
+            res = (await connection.manager.find(WMATICvUSDTOrder)) as Array<Required<WMATICvUSDTOrder>>;
+        }
+        return res;
+    }
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        const filterObjectWithValuesIfExist: Partial<any> = {
-            base_token: params.base_token,
-            quote_token: params.quote_token
-        };
-        const filterObject = _.pickBy(filterObjectWithValuesIfExist, _.identity.bind(_));
-        let maticOHLVCEntity = (await connection.manager.find(MaticOHLVC, { where: filterObject })) as Array<Required<MaticOHLVC>>;
+        let ohlvcEntity: any[] = [];
+        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
+            ohlvcEntity = (await connection.manager.find(NIOXvUSDTOHLVC)) as Array<Required<NIOXvUSDTOHLVC>>;
+        }
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
+            ohlvcEntity = (await connection.manager.find(WMATICvUSDTOHLVC)) as Array<Required<WMATICvUSDTOHLVC>>;
+        }
         let params_from = parseFloat(params.from);
         let params_to = parseFloat(params.to);
         let params_interval = parseFloat(params.interval);
@@ -325,7 +357,7 @@ export class OrderBook {
         let high = 0;
         let low = 10000000000000;
         let volume = 0;
-        maticOHLVCEntity.forEach(entity => {
+        ohlvcEntity.forEach(entity => {
             if (entity.dt >= params_to) {
                 return;
             }

@@ -73,6 +73,8 @@ export const myEvent = new EventEmitter();
 
     app.get('/v2/history', asyncHandler(handlers.getOHLVCDataAsync.bind(handlers)));
 
+    app.get('/v2/orderhistory', asyncHandler(handlers.getOrderHistoryAsync.bind(handlers)));
+
     app.post('/v2/market', asyncHandler(handlers.submitMarketOrderAsync.bind(handlers)));
 
 

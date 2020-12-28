@@ -1,20 +1,14 @@
 import { EntitySchema } from 'typeorm';
 
-import { MaticOHLVC } from '../models/MaticOHLVC';
+import { WMATICvUSDTOHLVC } from '../models/WMATICvUSDTOHLVC';
 
-export const maticOHLVCEntity = new EntitySchema<MaticOHLVC>({
-    name: 'MaticOHLVC',
-    target: MaticOHLVC,
+export const WMATICvUSDTOHLVCEntity = new EntitySchema<WMATICvUSDTOHLVC>({
+    name: 'WMATICvUSDTOHLVC',
+    target: WMATICvUSDTOHLVC,
     columns: {
         dt: {
             primary: true,
             type: 'int',
-        },
-        base_token: {
-            type: 'varchar'
-        },
-        quote_token: {
-            type: 'varchar'
         },
         bid: {
             type: 'int',
