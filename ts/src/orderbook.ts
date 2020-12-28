@@ -337,11 +337,11 @@ export class OrderBook {
             const connection = getDBConnection();
             if (order.makerAssetData === 'niox' && order.takerAssetData === 'usdt') {
                 // NIOX/USDT pair
-                await connection.manager.save(new NIOXvUSDTOrder({...order, status: status, hash: orderHash}));
+                await connection.manager.save(new NIOXvUSDTOrder({...order, status: status, hash: orderHash, expirationTimeSeconds: order.expirationTimeSeconds.toNumber()}));
             }
             else if (order.makerAssetData === 'wmatic' && order.takerAssetData === 'usdt') {
                 // WMATIC/USDT pair
-                await connection.manager.save(new WMATICvUSDTOrder({...order, status: status, hash: orderHash}));
+                await connection.manager.save(new WMATICvUSDTOrder({...order, status: status, hash: orderHash, expirationTimeSeconds: order.expirationTimeSeconds.toNumber()}));
             }
         }
     }
