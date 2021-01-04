@@ -20,10 +20,10 @@ export const myEvent = new EventEmitter();
     const handlers = new Handlers();
     await handlers.initOrderBookAsync();
     const app = express();
-    let http = require('http').Server(app);
     app.use(cors());
     app.use(bodyParser.json());
     app.use(urlParamsParsing);
+    let http = require('http').Server(app);
 
     let io = require("socket.io")(http);
 
