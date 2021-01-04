@@ -21,6 +21,7 @@ export const WHITELISTED_TOKENS: string[] | '*' = _.isEmpty(process.env.WHITELIS
           '0x6f3b2e10972cd42219f4108e72e9e15a616e5ba9', // WETH on matic mainnet 137
           '0xad684e79CE4b6D464f2Ff7c3FD51646892e24b96', //niox on matic mainnet 137
           '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', //usdc on matic mainnet 137
+          '0xc2c84b533a9518241e73d525afc89c3c57769e9f', //derc20 on matic mainnet 137
       ]
     : assertEnvVarType('WHITELIST_ALL_TOKENS', process.env.WHITELIST_ALL_TOKENS, EnvVarType.WhitelistAllTokens);
 
