@@ -25,7 +25,11 @@ export const myEvent = new EventEmitter();
     app.use(urlParamsParsing);
     let http = require('http').Server(app);
 
-    let io = require("socket.io")(http);
+    let io = require("socket.io")(http, {
+        cors: {
+            origin: '*',
+        }
+    });
 
     io.on("connection", function(socket: any) {
         console.log("a user connected", socket.id);
