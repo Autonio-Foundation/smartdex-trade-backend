@@ -159,6 +159,8 @@ export class OrderBook {
             utils.log(err);
         } else {
             const state = orderState as OrderState;
+            console.log('==========================================');
+            console.log(state);
             if (!state.isValid) {
                 this._shadowedOrders.set(state.orderHash, Date.now());
                 if (state.error === 'ORDER_CANCELLED') {
