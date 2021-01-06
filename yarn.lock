@@ -27,7 +27,7 @@
   resolved "https://registry.npmjs.org/@0x/abi-gen-wrappers/-/abi-gen-wrappers-5.0.1.tgz#c3683fc7e6cc71033ab1cc8a7e616743f321583a"
   dependencies:
     "@0x/base-contract" "^5.1.1"
-    "@0x/contract-addresses" "^3.0.1"
+    "@0x/contract-addresses" "file:../0x-monorepo-matic/packages/contract-addresses"
     "@0x/contract-artifacts" "^2.0.1"
 
 "@0x/assert@^2.0.10", "@0x/assert@^2.1.0":
@@ -85,7 +85,7 @@
   dependencies:
     "@0x/abi-gen-wrappers" "^5.0.1"
     "@0x/assert" "^2.1.0"
-    "@0x/contract-addresses" "^3.0.1"
+    "@0x/contract-addresses" "file:../0x-monorepo-matic/packages/contract-addresses"
     "@0x/contract-artifacts" "^2.0.1"
     "@0x/json-schemas" "^3.0.11"
     "@0x/order-utils" "^8.2.1"
@@ -134,7 +134,7 @@
     "@0x/abi-gen-wrappers" "^5.0.1"
     "@0x/assert" "^2.1.0"
     "@0x/base-contract" "^5.1.1"
-    "@0x/contract-addresses" "^3.0.1"
+    "@0x/contract-addresses" "file:../0x-monorepo-matic/packages/contract-addresses"
     "@0x/contract-artifacts" "^2.0.1"
     "@0x/json-schemas" "^3.0.11"
     "@0x/types" "^2.4.0"
@@ -156,7 +156,7 @@
     "@0x/abi-gen-wrappers" "^5.0.1"
     "@0x/assert" "^2.1.0"
     "@0x/base-contract" "^5.1.1"
-    "@0x/contract-addresses" "^3.0.1"
+    "@0x/contract-addresses" "file:../0x-monorepo-matic/packages/contract-addresses"
     "@0x/contract-artifacts" "^2.0.1"
     "@0x/contract-wrappers" "^9.1.6"
     "@0x/fill-scenarios" "^3.0.12"
