@@ -7,7 +7,7 @@ import { ValidationError, ValidationErrorCodes, ValidationErrorItem } from './er
 const schemaValidator = new SchemaValidator();
 
 export const utils = {
-    log: (...args: any[]) => {
+    log: (..._args: any[]) => {
         // tslint:disable-next-line:no-console
         // console.log(...args);
     },
