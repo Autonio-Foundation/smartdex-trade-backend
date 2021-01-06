@@ -186,7 +186,6 @@ export class OrderBook {
                 permanentlyExpiredOrders.push(orderHash);
                 this._shadowedOrders.delete(orderHash); // we need to remove this order so we don't keep shadowing it
                 this._orderWatcher.removeOrder(orderHash); // also remove from order watcher to avoid more callbacks
-                this.addOrderHistoryAsync(orderHash,'Executed');
             }
         }
         if (!_.isEmpty(permanentlyExpiredOrders)) {
