@@ -30,6 +30,7 @@ import { WMATICvUSDTOrder } from './models/WMATICvUSDTOrder';
 import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
+import { TOKEN_ADDRESSES } from './config';
 
 interface GetOHLVCDataParams {
     base_token: string,
@@ -353,11 +354,16 @@ export class OrderBook {
                 expirationTimeSeconds: order.expirationTimeSeconds.toNumber(),
         
             }
-            if (order.makerAssetData === 'niox' && order.takerAssetData === 'usdt') {
+
+            const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
+            const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
+            // const wmaticAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.wmatic);
+        
+            if (order.makerAssetData === nioxAssetData && order.takerAssetData === usdtAssetData) {
                 // NIOX/USDT pair
                 await connection.manager.save(new NIOXvUSDTOrder(serializedOrder));
             }
-            else if (order.makerAssetData === 'wmatic' && order.takerAssetData === 'usdt') {
+            else {
                 // WMATIC/USDT pair
                 await connection.manager.save(new WMATICvUSDTOrder(serializedOrder));
             }
@@ -367,10 +373,10 @@ export class OrderBook {
         var res : Array<any> = [];
         const connection = getDBConnection();
         if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(NIOXvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+            res = (await connection.manager.find(NIOXvUSDTOrder, { where: { makerAddress: params.address} })) as Array<Required<NIOXvUSDTOrder>>;
         }
         else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(WMATICvUSDTOrder)) as Array<Required<WMATICvUSDTOrder>>;
+            res = (await connection.manager.find(WMATICvUSDTOrder, { where: { makerAddress: params.address} })) as Array<Required<WMATICvUSDTOrder>>;
         }
         return res;
     }
