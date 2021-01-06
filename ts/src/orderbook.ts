@@ -185,6 +185,7 @@ export class OrderBook {
         for (const [orderHash, shadowedAt] of this._shadowedOrders) {
             const now = Date.now();
             if (shadowedAt + ORDER_SHADOWING_MARGIN_MS < now) {
+                this.addOrderHistoryAsync(orderHash, 'Cancelled');
                 permanentlyExpiredOrders.push(orderHash);
                 this._shadowedOrders.delete(orderHash); // we need to remove this order so we don't keep shadowing it
                 this._orderWatcher.removeOrder(orderHash); // also remove from order watcher to avoid more callbacks
@@ -328,6 +329,7 @@ export class OrderBook {
                 await this._orderWatcher.addOrderAsync(signedOrder);
             } catch (err) {
                 const orderHash = orderHashUtils.getOrderHashHex(signedOrder);
+                this.addOrderHistoryAsync(orderHash, 'Executed');
                 await connection.manager.delete(SignedOrderModel, orderHash);
             }
         }
