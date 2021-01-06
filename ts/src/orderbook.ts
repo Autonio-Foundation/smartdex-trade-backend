@@ -164,18 +164,7 @@ export class OrderBook {
             console.log(state);
             if (!state.isValid) {
                 this._shadowedOrders.set(state.orderHash, Date.now());
-                if (state.error === 'ORDER_CANCELLED') {
-                    // Cancelled Order
-                    this.addOrderHistoryAsync(state.orderHash,'Cancelled');
-                }
-                else if (state.error === 'ORDER_FILL_AMOUNT_ZERO') {
-                    // Executed
-                    this.addOrderHistoryAsync(state.orderHash,'Executed');
-                }
-                else {
-                    // Error
-                    this.addOrderHistoryAsync(state.orderHash,'Error');
-                }
+                this.addOrderHistoryAsync(state.orderHash,'Executed');
             } else {
                 this._shadowedOrders.delete(state.orderHash);
             }
@@ -330,7 +319,7 @@ export class OrderBook {
                 await this._orderWatcher.addOrderAsync(signedOrder);
             } catch (err) {
                 const orderHash = orderHashUtils.getOrderHashHex(signedOrder);
-                await this.addOrderHistoryAsync(orderHash, 'Executed');
+                await this.addOrderHistoryAsync(orderHash, 'Cancelled');
                 await connection.manager.delete(SignedOrderModel, orderHash);
             }
         }
