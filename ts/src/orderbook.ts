@@ -354,8 +354,8 @@ export class OrderBook {
             const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
             // const wmaticAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.wmatic);
         
-            if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdtAssetData) && 
-            order.makerAssetData === usdtAssetData && order.takerAssetData === nioxAssetData) {
+            if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdtAssetData) || 
+            (order.makerAssetData === usdtAssetData && order.takerAssetData === nioxAssetData)) {
                 // NIOX/USDT pair
                 await connection.manager.save(new NIOXvUSDTOrder(serializedOrder));
             }
