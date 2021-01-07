@@ -163,8 +163,8 @@ export class OrderBook {
             if (!state.isValid) {
                 this._shadowedOrders.set(state.orderHash, Date.now());
                 if (state.error === 'ORDER_CANCELLED') {
-                    // Cancelled Order
-                    this.addOrderHistoryAsync(state.orderHash,'Cancelled');
+                    // Canceled Order
+                    this.addOrderHistoryAsync(state.orderHash,'Canceled');
                 }
                 else {
                     this.addOrderHistoryAsync(state.orderHash,'Executed');
@@ -323,7 +323,7 @@ export class OrderBook {
                 await this._orderWatcher.addOrderAsync(signedOrder);
             } catch (err) {
                 const orderHash = orderHashUtils.getOrderHashHex(signedOrder);
-                await this.addOrderHistoryAsync(orderHash, 'Cancelled');
+                await this.addOrderHistoryAsync(orderHash, 'Canceled');
                 await connection.manager.delete(SignedOrderModel, orderHash);
             }
         }
