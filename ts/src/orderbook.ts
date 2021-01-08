@@ -394,9 +394,10 @@ export class OrderBook {
                 order: { dt: "ASC"}
             })) as Array<Required<WMATICvUSDTOHLVC>>;
         }
-        if (ohlvcEntity.length > 0) {
-            params_from = ohlvcEntity[0].dt;
+        if (ohlvcEntity.length === 0) {
+            return [];
         }
+        params_from = ohlvcEntity[0].dt;
         let curDate = new Date();
         if (params_to < curDate.getTime()) {
             params_to = curDate.getTime();
