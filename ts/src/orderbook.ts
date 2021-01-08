@@ -396,7 +396,7 @@ export class OrderBook {
         }
         params_from = ohlvcEntity[0].dt;
         let curDate = new Date();
-        if (params_to > curDate.getTime()) {
+        if (params_to < curDate.getTime()) {
             params_to = curDate.getTime();
         }
         for (let i = params_from ; i < params_to ; i += params_interval) {
