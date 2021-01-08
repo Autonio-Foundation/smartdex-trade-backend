@@ -401,32 +401,32 @@ export class OrderBook {
             newData.open = 0;
             newData.close = 0;
             newData.high = 0;
-            newData.low = 0;
+            newData.low = 10000000000000;
             newData.volume = 0;
             res.push(newData);
         }
-        console.log(res);
+        res[0].open = ohlvcEntity[0].bid;
+        res[0].close = ohlvcEntity[0].bid;
+        res[0].high = ohlvcEntity[0].bid;
+        res[0].low = ohlvcEntity[0].bid;
         let curId = 0;
         let high = 0;
-        let low = 10000000000000;
-        let volume = 0;
+        let low = 0;
         ohlvcEntity.forEach(entity => {
             let id = Math.floor((entity.dt - params_from) / params_interval);
             if (curId != id) {
-                for(let i = curId + 1 ; i < id ; i ++) {
+                for(let i = curId + 1 ; i <= id ; i ++) {
                     res[i].open = res[curId].close;
                     res[i].close = res[curId].close;
                     res[i].high = res[curId].close;
                     res[i].low = res[curId].close;
                 }
-                res[id].open = res[curId].close;
+                res[id].volume = 0;
                 high = entity.bid;
                 low = entity.bid;
-                volume = 0;
                 curId = id;
             }
             res[id].close = entity.bid;
-            volume = volume + entity.bid_vol + entity.ask_vol;
 
             if (high < entity.bid) {
                 high = entity.bid;
@@ -435,7 +435,7 @@ export class OrderBook {
                 low = entity.bid;
             }
 
-            res[id].volume = volume;
+            res[id].volume += entity.bid_vol + entity.ask_vol;
             res[id].high = high;
             res[id].low = low;
         })
