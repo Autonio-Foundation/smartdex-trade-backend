@@ -31,6 +31,7 @@ import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
 import { TOKEN_ADDRESSES } from './config';
+import {Between} from "typeorm";
 
 interface GetOHLVCDataParams {
     base_token: string,
@@ -377,16 +378,23 @@ export class OrderBook {
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        let ohlvcEntity: any[] = [];
-        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            ohlvcEntity = (await connection.manager.find(NIOXvUSDTOHLVC)) as Array<Required<NIOXvUSDTOHLVC>>;
-        }
-        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            ohlvcEntity = (await connection.manager.find(WMATICvUSDTOHLVC)) as Array<Required<WMATICvUSDTOHLVC>>;
-        }
         let params_from = parseFloat(params.from);
         let params_to = parseFloat(params.to);
         let params_interval = parseFloat(params.interval);
+        let ohlvcEntity: any[] = [];
+        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
+            ohlvcEntity = (await connection.manager.find(NIOXvUSDTOHLVC, { 
+                where: { dt: Between(params_from, params_to) }, 
+                order: { dt: "ASC"}
+            })) as Array<Required<NIOXvUSDTOHLVC>>;
+        }
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
+            ohlvcEntity = (await connection.manager.find(WMATICvUSDTOHLVC, { 
+                where: { dt: Between(params_from, params_to) },
+                order: { dt: "ASC"}
+            })) as Array<Required<WMATICvUSDTOHLVC>>;
+        }
+        params_from = ohlvcEntity[0].dt;
         for (let i = params_from ; i < params_to ; i += params_interval) {
             var newData = new OHLVCData();
             newData.time = i;
@@ -403,39 +411,33 @@ export class OrderBook {
         let low = 10000000000000;
         let volume = 0;
         ohlvcEntity.forEach(entity => {
-            if (entity.dt >= params_to) {
-                return;
-            }
-            if (entity.dt >= params_from) {
-                console.log(entity);
-                let id = Math.floor((entity.dt - params_from) / params_interval);
-                if (curId != id) {
-                    for(let i = curId + 1 ; i < id ; i ++) {
-                        res[i].open = res[curId].close;
-                        res[i].close = res[curId].close;
-                        res[i].high = res[curId].close;
-                        res[i].low = res[curId].close;
-                    }
-                    res[id].open = res[curId].close;
-                    high = entity.bid;
-                    low = entity.bid;
-                    volume = 0;
-                    curId = id;
+            let id = Math.floor((entity.dt - params_from) / params_interval);
+            if (curId != id) {
+                for(let i = curId + 1 ; i < id ; i ++) {
+                    res[i].open = res[curId].close;
+                    res[i].close = res[curId].close;
+                    res[i].high = res[curId].close;
+                    res[i].low = res[curId].close;
                 }
-                res[id].close = entity.bid;
-                volume = volume + entity.bid_vol + entity.ask_vol;
+                res[id].open = res[curId].close;
+                high = entity.bid;
+                low = entity.bid;
+                volume = 0;
+                curId = id;
+            }
+            res[id].close = entity.bid;
+            volume = volume + entity.bid_vol + entity.ask_vol;
 
-                if (high < entity.bid) {
-                    high = entity.bid;
-                }
-                if (low > entity.bid) {
-                    low = entity.bid;
-                }
-    
-                res[id].volume = volume;
-                res[id].high = high;
-                res[id].low = low;
+            if (high < entity.bid) {
+                high = entity.bid;
             }
+            if (low > entity.bid) {
+                low = entity.bid;
+            }
+
+            res[id].volume = volume;
+            res[id].high = high;
+            res[id].low = low;
         })
         for (let i = curId + 1 ; i < res.length ; i ++) {
             res[i].open = res[curId].close;
