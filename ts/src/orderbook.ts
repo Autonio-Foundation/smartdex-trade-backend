@@ -378,9 +378,9 @@ export class OrderBook {
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
-        let params_from = parseFloat(params.from);
-        let params_to = parseFloat(params.to);
-        let params_interval = parseFloat(params.interval);
+        let params_from = parseInt(params.from);
+        let params_to = parseInt(params.to);
+        let params_interval = parseInt(params.interval);
         let ohlvcEntity: any[] = [];
         if (params.base_token === 'niox' && params.quote_token === 'usdt') {
             ohlvcEntity = (await connection.manager.find(NIOXvUSDTOHLVC, { 
