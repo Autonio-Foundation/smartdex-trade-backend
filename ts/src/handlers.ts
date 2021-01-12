@@ -94,7 +94,6 @@ export class Handlers {
         res.status(HttpStatus.OK).send(orderbookResponse);
     }
     public async overallOrderhistoryAsync(req: express.Request, res: express.Response): Promise<void> {
-        utils.validateSchema(req.query, schemas.orderBookRequestSchema);
         const { page, perPage } = parsePaginationConfig(req);
         const base_token = req.query.base_token;
         const quote_token = req.query.quote_token;
