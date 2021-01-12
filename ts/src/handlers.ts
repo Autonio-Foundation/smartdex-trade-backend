@@ -93,6 +93,14 @@ export class Handlers {
         const orderbookResponse = await this._orderBook.getOrderBookAsync(page, perPage, baseAssetData, quoteAssetData);
         res.status(HttpStatus.OK).send(orderbookResponse);
     }
+    public async overallOrderhistoryAsync(req: express.Request, res: express.Response): Promise<void> {
+        utils.validateSchema(req.query, schemas.orderBookRequestSchema);
+        const { page, perPage } = parsePaginationConfig(req);
+        const baseAssetData = req.query.baseAssetData;
+        const quoteAssetData = req.query.quoteAssetData;
+        const orderbookResponse = await this._orderBook.getAllOrderHistoryAsync(page, perPage, baseAssetData, quoteAssetData);
+        res.status(HttpStatus.OK).send(orderbookResponse);
+    }
     public async postOrderAsync(req: express.Request, res: express.Response): Promise<void> {
         utils.validateSchema(req.body, schemas.signedOrderSchema);
         const signedOrder = unmarshallOrder(req.body);

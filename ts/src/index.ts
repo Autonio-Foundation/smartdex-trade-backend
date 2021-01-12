@@ -54,6 +54,7 @@ export const myEvent = new EventEmitter();
      * http://sra-spec.s3-website-us-east-1.amazonaws.com/#operation/getOrderbook
      */
     app.get('/v2/orderbook', asyncHandler(handlers.orderbookAsync.bind(handlers)));
+    app.get('/v2/overallhistory', asyncHandler(handlers.overallOrderhistoryAsync.bind(handlers)));
     /**
      * POST Order config endpoint retrives the values for order fields that the relayer requires.
      * http://sra-spec.s3-website-us-east-1.amazonaws.com/#operation/getOrderConfig

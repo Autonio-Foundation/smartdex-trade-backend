@@ -375,6 +375,43 @@ export class OrderBook {
         }
         return res;
     }
+    public async getAllOrderHistoryAsync(
+        page: number,
+        perPage: number,
+        baseAssetData: string,
+        quoteAssetData: string,
+    ): Promise<OrderbookResponse> {
+        var res : Array<any> = [];
+        const connection = getDBConnection();
+        const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
+        const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
+        if (baseAssetData === nioxAssetData && quoteAssetData === usdtAssetData) {
+            res = (await connection.manager.find(NIOXvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+        }
+        else {
+            res = (await connection.manager.find(WMATICvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+        }
+        const apiOrders: APIOrder[] = res
+            .map(signedOrder => ({
+                signature: signedOrder.signature,
+                senderAddress: signedOrder.senderAddress,
+                makerAddress: signedOrder.makerAddress,
+                takerAddress: signedOrder.takerAddress,
+                makerFee: new BigNumber(signedOrder.makerFee),
+                takerFee: new BigNumber(signedOrder.takerFee),
+                makerAssetAmount: new BigNumber(signedOrder.makerAssetAmount),
+                takerAssetAmount: new BigNumber(signedOrder.takerAssetAmount),
+                makerAssetData: signedOrder.makerAssetData,
+                takerAssetData: signedOrder.takerAssetData,
+                salt: new BigNumber(signedOrder.salt),
+                exchangeAddress: signedOrder.exchangeAddress,
+                feeRecipientAddress: signedOrder.feeRecipientAddress,
+                expirationTimeSeconds: new BigNumber(signedOrder.expirationTimeSeconds),
+            }))
+            .map(signedOrder => ({ metaData: {}, order: signedOrder }));
+        const paginatedApiOrderHistory = paginate(apiOrders, page, perPage);
+        return paginatedApiOrderHistory;
+    }
     public async getOHLVCDataAsync(params: GetOHLVCDataParams): Promise<Array<OHLVCData>> {
         var res : Array<OHLVCData> = [];
         const connection = getDBConnection();
