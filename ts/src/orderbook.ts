@@ -389,7 +389,7 @@ export class OrderBook {
         else {
             res = (await connection.manager.find(WMATICvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
         }
-        const apiOrders: APIOrder[] = res
+        const apiOrders: any[] = res
             .map(signedOrder => ({
                 signature: signedOrder.signature,
                 senderAddress: signedOrder.senderAddress,
@@ -405,6 +405,7 @@ export class OrderBook {
                 exchangeAddress: signedOrder.exchangeAddress,
                 feeRecipientAddress: signedOrder.feeRecipientAddress,
                 expirationTimeSeconds: new BigNumber(signedOrder.expirationTimeSeconds),
+                status: signedOrder.status
             }))
             .map(signedOrder => ({ metaData: {}, order: signedOrder }));
         const paginatedApiOrderHistory = paginate(apiOrders, page, perPage);
