@@ -380,7 +380,7 @@ export class OrderBook {
         perPage: number,
         baseAssetData: string,
         quoteAssetData: string,
-    ): Promise<OrderbookResponse> {
+    ): Promise<any> {
         var res : Array<any> = [];
         const connection = getDBConnection();
         const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
