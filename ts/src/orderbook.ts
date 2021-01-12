@@ -378,14 +378,12 @@ export class OrderBook {
     public async getAllOrderHistoryAsync(
         page: number,
         perPage: number,
-        baseAssetData: string,
-        quoteAssetData: string,
+        base_token: string,
+        quote_token: string,
     ): Promise<any> {
         var res : Array<any> = [];
         const connection = getDBConnection();
-        const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
-        const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
-        if (baseAssetData === nioxAssetData && quoteAssetData === usdtAssetData) {
+        if (base_token === 'niox' && quote_token === 'usdt') {
             res = (await connection.manager.find(NIOXvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
         }
         else {
