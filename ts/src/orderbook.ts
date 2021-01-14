@@ -384,10 +384,14 @@ export class OrderBook {
         var res : Array<any> = [];
         const connection = getDBConnection();
         if (base_token === 'niox' && quote_token === 'usdt') {
-            res = (await connection.manager.find(NIOXvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+            res = (await connection.manager.find(NIOXvUSDTOrder, {
+                order: { salt: "DESC"}
+            })) as Array<Required<NIOXvUSDTOrder>>;
         }
         else {
-            res = (await connection.manager.find(WMATICvUSDTOrder)) as Array<Required<NIOXvUSDTOrder>>;
+            res = (await connection.manager.find(WMATICvUSDTOrder, {
+                order: { salt: "DESC"}
+            })) as Array<Required<NIOXvUSDTOrder>>;
         }
         const apiOrders: any[] = res
             .map(signedOrder => ({
