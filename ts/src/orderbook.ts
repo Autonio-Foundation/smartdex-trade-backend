@@ -368,10 +368,10 @@ export class OrderBook {
         var res : Array<any> = [];
         const connection = getDBConnection();
         if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(NIOXvUSDTOrder, { where: { makerAddress: params.address} })) as Array<Required<NIOXvUSDTOrder>>;
+            res = (await connection.manager.find(NIOXvUSDTOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<NIOXvUSDTOrder>>;
         }
         else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(WMATICvUSDTOrder, { where: { makerAddress: params.address} })) as Array<Required<WMATICvUSDTOrder>>;
+            res = (await connection.manager.find(WMATICvUSDTOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<WMATICvUSDTOrder>>;
         }
         return res;
     }
