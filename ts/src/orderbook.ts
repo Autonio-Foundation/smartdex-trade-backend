@@ -31,7 +31,7 @@ import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
 import { TOKEN_ADDRESSES } from './config';
-import {Between} from "typeorm";
+import { Between, LessThan } from "typeorm";
 
 interface GetOHLVCDataParams {
     base_token: string,
@@ -39,6 +39,11 @@ interface GetOHLVCDataParams {
     from: string,
     to: string,
     interval: string,
+}
+
+interface GetPrevMarketPriceParams {
+    base_token: string,
+    quote_token: string,
 }
 
 interface GetOrderHistoryParams {
@@ -375,6 +380,28 @@ export class OrderBook {
         }
         return res;
     }
+    public async getPrevMarketPriceAsync(params: GetPrevMarketPriceParams): Promise<any> {
+        var ohlvcData : Array<any> = [];
+        var dateNow = new Date();
+        dateNow.setDate(dateNow.getDate() - 1);
+        const connection = getDBConnection();
+        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
+            ohlvcData = (await connection.manager.find(NIOXvUSDTOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<NIOXvUSDTOHLVC>>;
+        }
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
+            ohlvcData = (await connection.manager.find(WMATICvUSDTOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<WMATICvUSDTOHLVC>>;
+        }
+        if (ohlvcData.length === 0) {
+            return 0;
+        }
+        return ohlvcData[0].bid;
+}
     public async getAllOrderHistoryAsync(
         page: number,
         perPage: number,

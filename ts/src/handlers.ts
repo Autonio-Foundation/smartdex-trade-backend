@@ -169,6 +169,21 @@ export class Handlers {
             ]);
         }
     }
+    public async getPrevMarketPriceAsync(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const params = req.query;
+            const Data = await this._orderBook.getPrevMarketPriceAsync(params);
+            res.status(HttpStatus.OK).send(Data);
+        } catch (err) {
+            throw new ValidationError([
+                {
+                    field: 'Order History',
+                    code: ValidationErrorCodes.InvalidOrder,
+                    reason: err.message,
+                },
+            ]);
+        }
+    }
 }
 
 // function validateAssetDataIsWhitelistedOrThrow(allowedTokens: string[], assetData: string, field: string): void {

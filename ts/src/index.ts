@@ -83,6 +83,8 @@ export const myEvent = new EventEmitter();
 
     app.get('/v2/overallhistory', asyncHandler(handlers.overallOrderhistoryAsync.bind(handlers)));
 
+    app.get('/v2/prev-market', asyncHandler(handlers.getPrevMarketPriceAsync.bind(handlers)));
+
     app.use(errorHandler);
 
     http.listen(config.HTTP_PORT, () => {
