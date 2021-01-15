@@ -398,9 +398,9 @@ export class OrderBook {
             })) as Array<Required<WMATICvUSDTOHLVC>>;
         }
         if (ohlvcData.length === 0) {
-            return 0;
+            return {prevPrice: 0};
         }
-        return ohlvcData[0].bid;
+        return {prevPrice: ohlvcData[0].bid};
 }
     public async getAllOrderHistoryAsync(
         page: number,
