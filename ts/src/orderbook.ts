@@ -464,11 +464,9 @@ export class OrderBook {
         if (ohlvcEntity.length === 0) {
             return [];
         }
+        let length = ohlvcEntity.length;
         params_from = ohlvcEntity[0].dt;
-        let curDate = new Date();
-        if (params_to < curDate.getTime()) {
-            params_to = curDate.getTime();
-        }
+        params_to = ohlvcEntity[length - 1].dt;
         for (let i = params_from ; i < params_to ; i += params_interval) {
             var newData = new OHLVCData();
             newData.time = i;
