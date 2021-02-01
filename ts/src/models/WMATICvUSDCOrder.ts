@@ -1,4 +1,4 @@
-export class NIOXvUSDTOrder {
+export class WMATICvUSDCOrder {
     public hash?: string;
     public senderAddress?: string;
     public makerAddress?: string;

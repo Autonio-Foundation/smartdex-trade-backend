@@ -1,10 +1,10 @@
 import { EntitySchema } from 'typeorm';
 
-import { WMATICvUSDTOrder } from '../models/WMATICvUSDTOrder';
+import { USDTvUSDCOrder } from '../models/USDTvUSDCOrder';
 
-export const WMATICvUSDTOrderEntity = new EntitySchema<WMATICvUSDTOrder>({
-    name: 'WMATICvUSDTOrder',
-    target: WMATICvUSDTOrder,
+export const USDTvUSDCOrderEntity = new EntitySchema<USDTvUSDCOrder>({
+    name: 'USDTvUSDCOrder',
+    target: USDTvUSDCOrder,
     columns: {
         hash: {
             primary: true,

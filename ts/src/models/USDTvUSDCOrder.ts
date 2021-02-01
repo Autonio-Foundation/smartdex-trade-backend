@@ -1,4 +1,4 @@
-export class WMATICvUSDTOrder {
+export class USDTvUSDCOrder {
     public hash?: string;
     public senderAddress?: string;
     public makerAddress?: string;

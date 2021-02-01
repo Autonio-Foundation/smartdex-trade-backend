@@ -23,10 +23,12 @@ import {
 } from './config';
 import { MAX_TOKEN_SUPPLY_POSSIBLE } from './constants';
 import { getDBConnection } from './db_connection';
-import { NIOXvUSDTOHLVC } from './models/NIOXvUSDTOHLVC';
-import { NIOXvUSDTOrder } from './models/NIOXvUSDTOrder';
-import { WMATICvUSDTOHLVC } from './models/WMATICvUSDTOHLVC';
-import { WMATICvUSDTOrder } from './models/WMATICvUSDTOrder';
+import { NIOXvUSDCOHLVC } from './models/NIOXvUSDCOHLVC';
+import { NIOXvUSDCOrder } from './models/NIOXvUSDCOrder';
+import { WMATICvUSDCOHLVC } from './models/WMATICvUSDCOHLVC';
+import { WMATICvUSDCOrder } from './models/WMATICvUSDCOrder';
+import { USDTvUSDCOHLVC } from './models/USDTvUSDCOHLVC';
+import { USDTvUSDCOrder } from './models/USDTvUSDCOrder';
 import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
@@ -205,11 +207,14 @@ export class OrderBook {
             bid_vol: entity.bid_vol,
             ask_vol: entity.ask_vol,
         };
-        if (entity.base_token === 'niox' && entity.quote_token === 'usdt') {
-            await connection.manager.save(new NIOXvUSDTOHLVC(params));
+        if (entity.base_token === 'niox' && entity.quote_token === 'usdc') {
+            await connection.manager.save(new NIOXvUSDCOHLVC(params));
         }
-        else if (entity.base_token === 'wmatic' && entity.quote_token === 'usdt') {
-            await connection.manager.save(new WMATICvUSDTOHLVC(params));
+        else if (entity.base_token === 'wmatic' && entity.quote_token === 'usdc') {
+            await connection.manager.save(new WMATICvUSDCOHLVC(params));
+        }
+        else if (entity.base_token === 'usdt' && entity.quote_token === 'usdc') {
+            await connection.manager.save(new USDTvUSDCOHLVC(params));
         }
     }
     public async addOrderAsync(signedOrder: SignedOrder): Promise<void> {
@@ -355,28 +360,38 @@ export class OrderBook {
             }
 
             const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
+            const usdcAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdc);
+            const wmaticAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.wmatic);
             const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
-            // const wmaticAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.wmatic);
         
-            if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdtAssetData) || 
-            (order.makerAssetData === usdtAssetData && order.takerAssetData === nioxAssetData)) {
-                // NIOX/USDT pair
-                await connection.manager.save(new NIOXvUSDTOrder(serializedOrder));
+            if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdcAssetData) || 
+            (order.makerAssetData === usdcAssetData && order.takerAssetData === nioxAssetData)) {
+                // NIOX/USDC pair
+                await connection.manager.save(new NIOXvUSDCOrder(serializedOrder));
             }
-            else {
-                // WMATIC/USDT pair
-                await connection.manager.save(new WMATICvUSDTOrder(serializedOrder));
+            else if ((order.makerAssetData === wmaticAssetData && order.takerAssetData === usdcAssetData) || 
+            (order.makerAssetData === usdcAssetData && order.takerAssetData === wmaticAssetData)) {
+                // WMATIC/USDC pair
+                await connection.manager.save(new WMATICvUSDCOrder(serializedOrder));
+            }
+            else if ((order.makerAssetData === usdtAssetData && order.takerAssetData === usdcAssetData) || 
+            (order.makerAssetData === usdcAssetData && order.takerAssetData === usdtAssetData)) {
+                // USDT/USDC pair
+                await connection.manager.save(new USDTvUSDCOrder(serializedOrder));
             }
         }
     }
     public async getOrderHistoryAsync(params: GetOrderHistoryParams): Promise<Array<any>> {
         var res : Array<any> = [];
         const connection = getDBConnection();
-        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(NIOXvUSDTOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<NIOXvUSDTOrder>>;
+        if (params.base_token === 'niox' && params.quote_token === 'usdc') {
+            res = (await connection.manager.find(NIOXvUSDCOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<NIOXvUSDCOrder>>;
         }
-        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            res = (await connection.manager.find(WMATICvUSDTOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<WMATICvUSDTOrder>>;
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdc') {
+            res = (await connection.manager.find(WMATICvUSDCOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<WMATICvUSDCOrder>>;
+        }
+        else if (params.base_token === 'usdt' && params.quote_token === 'usdc') {
+            res = (await connection.manager.find(USDTvUSDCOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<USDTvUSDCOrder>>;
         }
         return res;
     }
@@ -385,17 +400,23 @@ export class OrderBook {
         var dateNow = new Date();
         dateNow.setDate(dateNow.getDate() - 1);
         const connection = getDBConnection();
-        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            ohlvcData = (await connection.manager.find(NIOXvUSDTOHLVC, {
+        if (params.base_token === 'niox' && params.quote_token === 'usdc') {
+            ohlvcData = (await connection.manager.find(NIOXvUSDCOHLVC, {
                 where: { dt: LessThan(dateNow.getTime()) }, 
                 order: { dt: "DESC"}
-            })) as Array<Required<NIOXvUSDTOHLVC>>;
+            })) as Array<Required<NIOXvUSDCOHLVC>>;
         }
-        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            ohlvcData = (await connection.manager.find(WMATICvUSDTOHLVC, {
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdc') {
+            ohlvcData = (await connection.manager.find(WMATICvUSDCOHLVC, {
                 where: { dt: LessThan(dateNow.getTime()) }, 
                 order: { dt: "DESC"}
-            })) as Array<Required<WMATICvUSDTOHLVC>>;
+            })) as Array<Required<WMATICvUSDCOHLVC>>;
+        }
+        else if (params.base_token === 'usdt' && params.quote_token === 'usdc') {
+            ohlvcData = (await connection.manager.find(USDTvUSDCOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<USDTvUSDCOHLVC>>;
         }
         if (ohlvcData.length === 0) {
             return {prevPrice: 0};
@@ -410,15 +431,20 @@ export class OrderBook {
     ): Promise<any> {
         var res : Array<any> = [];
         const connection = getDBConnection();
-        if (base_token === 'niox' && quote_token === 'usdt') {
-            res = (await connection.manager.find(NIOXvUSDTOrder, {
+        if (base_token === 'niox' && quote_token === 'usdc') {
+            res = (await connection.manager.find(NIOXvUSDCOrder, {
                 order: { salt: "DESC"}
-            })) as Array<Required<NIOXvUSDTOrder>>;
+            })) as Array<Required<NIOXvUSDCOrder>>;
         }
-        else {
-            res = (await connection.manager.find(WMATICvUSDTOrder, {
+        else if (base_token === 'wmatic' && quote_token === 'usdc') {
+            res = (await connection.manager.find(WMATICvUSDCOrder, {
                 order: { salt: "DESC"}
-            })) as Array<Required<NIOXvUSDTOrder>>;
+            })) as Array<Required<WMATICvUSDCOrder>>;
+        }
+        else if (base_token === 'usdt' && quote_token === 'usdc') {
+            res = (await connection.manager.find(USDTvUSDCOrder, {
+                order: { salt: "DESC"}
+            })) as Array<Required<USDTvUSDCOrder>>;
         }
         const apiOrders: any[] = res
             .map(signedOrder => ({
@@ -449,17 +475,23 @@ export class OrderBook {
         let params_to = parseInt(params.to);
         let params_interval = parseInt(params.interval);
         let ohlvcEntity: any[] = [];
-        if (params.base_token === 'niox' && params.quote_token === 'usdt') {
-            ohlvcEntity = (await connection.manager.find(NIOXvUSDTOHLVC, { 
+        if (params.base_token === 'niox' && params.quote_token === 'usdc') {
+            ohlvcEntity = (await connection.manager.find(NIOXvUSDCOHLVC, { 
                 where: { dt: Between(params_from, params_to) }, 
                 order: { dt: "ASC"}
-            })) as Array<Required<NIOXvUSDTOHLVC>>;
+            })) as Array<Required<NIOXvUSDCOHLVC>>;
         }
-        else if (params.base_token === 'wmatic' && params.quote_token === 'usdt') {
-            ohlvcEntity = (await connection.manager.find(WMATICvUSDTOHLVC, { 
+        else if (params.base_token === 'wmatic' && params.quote_token === 'usdc') {
+            ohlvcEntity = (await connection.manager.find(WMATICvUSDCOHLVC, { 
                 where: { dt: Between(params_from, params_to) },
                 order: { dt: "ASC"}
-            })) as Array<Required<WMATICvUSDTOHLVC>>;
+            })) as Array<Required<WMATICvUSDCOHLVC>>;
+        }
+        else if (params.base_token === 'usdt' && params.quote_token === 'usdc') {
+            ohlvcEntity = (await connection.manager.find(USDTvUSDCOHLVC, { 
+                where: { dt: Between(params_from, params_to) },
+                order: { dt: "ASC"}
+            })) as Array<Required<USDTvUSDCOHLVC>>;
         }
         if (ohlvcEntity.length === 0) {
             return [];

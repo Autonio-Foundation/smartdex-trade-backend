@@ -1,10 +1,10 @@
 import { EntitySchema } from 'typeorm';
 
-import { NIOXvUSDTOrder } from '../models/NIOXvUSDTOrder';
+import { WMATICvUSDCOrder } from '../models/WMATICvUSDCOrder';
 
-export const NIOXvUSDTOrderEntity = new EntitySchema<NIOXvUSDTOrder>({
-    name: 'NIOXvUSDTOrder',
-    target: NIOXvUSDTOrder,
+export const WMATICvUSDCOrderEntity = new EntitySchema<WMATICvUSDCOrder>({
+    name: 'WMATICvUSDCOrder',
+    target: WMATICvUSDCOrder,
     columns: {
         hash: {
             primary: true,

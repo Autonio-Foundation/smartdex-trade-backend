@@ -1,4 +1,4 @@
-export class WMATICvUSDTOHLVC {
+export class NIOXvUSDCOHLVC {
     public dt?: number;
     public bid?: number;
     public ask?: number;

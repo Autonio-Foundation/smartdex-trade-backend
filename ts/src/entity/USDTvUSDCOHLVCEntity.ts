@@ -1,10 +1,10 @@
 import { EntitySchema } from 'typeorm';
 
-import { NIOXvUSDTOHLVC } from '../models/NIOXvUSDTOHLVC';
+import { USDTvUSDCOHLVC } from '../models/USDTvUSDCOHLVC';
 
-export const NIOXvUSDTOHLVCEntity = new EntitySchema<NIOXvUSDTOHLVC>({
-    name: 'NIOXvUSDTOHLVC',
-    target: NIOXvUSDTOHLVC,
+export const WMATICvUSDCOHLVCEntity = new EntitySchema<USDTvUSDCOHLVC>({
+    name: 'USDTvUSDCOHLVC',
+    target: USDTvUSDCOHLVC,
     columns: {
         dt: {
             primary: true,
