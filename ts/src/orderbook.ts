@@ -499,7 +499,7 @@ export class OrderBook {
         let length = ohlvcEntity.length;
         params_from = ohlvcEntity[0].dt;
         params_to = ohlvcEntity[length - 1].dt;
-        for (let i = params_from ; i < params_to ; i += params_interval) {
+        for (let i = params_from ; i <= params_to ; i += params_interval) {
             var newData = new OHLVCData();
             newData.time = i;
             newData.open = 0;
@@ -508,9 +508,6 @@ export class OrderBook {
             newData.low = 10000000000000;
             newData.volume = 0;
             res.push(newData);
-        }
-        if (res.length === 0) {
-            return [];
         }
         res[0].open = ohlvcEntity[0].bid;
         res[0].close = ohlvcEntity[0].bid;
