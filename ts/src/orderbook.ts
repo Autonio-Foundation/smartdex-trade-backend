@@ -509,6 +509,9 @@ export class OrderBook {
             newData.volume = 0;
             res.push(newData);
         }
+        if (res.length === 0) {
+            return [];
+        }
         res[0].open = ohlvcEntity[0].bid;
         res[0].close = ohlvcEntity[0].bid;
         res[0].high = ohlvcEntity[0].bid;
