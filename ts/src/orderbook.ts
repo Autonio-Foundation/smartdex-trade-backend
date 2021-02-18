@@ -433,17 +433,20 @@ export class OrderBook {
         const connection = getDBConnection();
         if (base_token === 'niox' && quote_token === 'usdc') {
             res = (await connection.manager.find(NIOXvUSDCOrder, {
-                order: { salt: "DESC"}
+                order: { salt: "DESC"},
+                limit: 10
             })) as Array<Required<NIOXvUSDCOrder>>;
         }
         else if (base_token === 'wmatic' && quote_token === 'usdc') {
             res = (await connection.manager.find(WMATICvUSDCOrder, {
-                order: { salt: "DESC"}
+                order: { salt: "DESC"},
+                limit: 10
             })) as Array<Required<WMATICvUSDCOrder>>;
         }
         else if (base_token === 'usdt' && quote_token === 'usdc') {
             res = (await connection.manager.find(USDTvUSDCOrder, {
-                order: { salt: "DESC"}
+                order: { salt: "DESC"},
+                limit: 10
             })) as Array<Required<USDTvUSDCOrder>>;
         }
         const apiOrders: any[] = res
