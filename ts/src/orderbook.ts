@@ -356,7 +356,6 @@ export class OrderBook {
                 exchangeAddress: order.exchangeAddress,
                 feeRecipientAddress: order.feeRecipientAddress,
                 expirationTimeSeconds: order.expirationTimeSeconds.toNumber(),
-        
             }
 
             const nioxAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.niox);
@@ -367,17 +366,26 @@ export class OrderBook {
             if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdcAssetData) || 
             (order.makerAssetData === usdcAssetData && order.takerAssetData === nioxAssetData)) {
                 // NIOX/USDC pair
-                await connection.manager.save(new NIOXvUSDCOrder(serializedOrder));
+                var res = (await connection.manager.find(NIOXvUSDCOrder, { where: { hash: orderHash} })) as Array<Required<NIOXvUSDCOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new NIOXvUSDCOrder(serializedOrder));
+                }
             }
             else if ((order.makerAssetData === wmaticAssetData && order.takerAssetData === usdcAssetData) || 
             (order.makerAssetData === usdcAssetData && order.takerAssetData === wmaticAssetData)) {
                 // WMATIC/USDC pair
-                await connection.manager.save(new WMATICvUSDCOrder(serializedOrder));
+                var res = (await connection.manager.find(WMATICvUSDCOrder, { where: { hash: orderHash} })) as Array<Required<WMATICvUSDCOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new WMATICvUSDCOrder(serializedOrder));
+                }
             }
             else if ((order.makerAssetData === usdtAssetData && order.takerAssetData === usdcAssetData) || 
             (order.makerAssetData === usdcAssetData && order.takerAssetData === usdtAssetData)) {
                 // USDT/USDC pair
-                await connection.manager.save(new USDTvUSDCOrder(serializedOrder));
+                var res = (await connection.manager.find(USDTvUSDCOrder, { where: { hash: orderHash} })) as Array<Required<USDTvUSDCOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new USDTvUSDCOrder(serializedOrder));
+                }
             }
         }
     }
