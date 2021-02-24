@@ -204,6 +204,7 @@ export class OrderBook {
             dt: entity.dt,
             bid: entity.bid,
             ask: entity.bid,
+            avg_price: entity.average_price,
             bid_vol: entity.bid_vol,
             ask_vol: entity.ask_vol,
         };
@@ -440,43 +441,32 @@ export class OrderBook {
         var res : Array<any> = [];
         const connection = getDBConnection();
         if (base_token === 'niox' && quote_token === 'usdc') {
-            res = (await connection.manager.find(NIOXvUSDCOrder, {
-                order: { salt: "DESC"},
+            res = (await connection.manager.find(NIOXvUSDCOHLVC, {
+                order: { dt: "DESC"},
                 skip: 0,
                 take: 10
-            })) as Array<Required<NIOXvUSDCOrder>>;
+            })) as Array<Required<NIOXvUSDCOHLVC>>;
         }
         else if (base_token === 'wmatic' && quote_token === 'usdc') {
-            res = (await connection.manager.find(WMATICvUSDCOrder, {
-                order: { salt: "DESC"},
+            res = (await connection.manager.find(WMATICvUSDCOHLVC, {
+                order: { dt: "DESC"},
                 skip: 0,
                 take: 10
-            })) as Array<Required<WMATICvUSDCOrder>>;
+            })) as Array<Required<WMATICvUSDCOHLVC>>;
         }
         else if (base_token === 'usdt' && quote_token === 'usdc') {
-            res = (await connection.manager.find(USDTvUSDCOrder, {
-                order: { salt: "DESC"},
+            res = (await connection.manager.find(USDTvUSDCOHLVC, {
+                order: { dt: "DESC"},
                 skip: 0,
                 take: 10
-            })) as Array<Required<USDTvUSDCOrder>>;
+            })) as Array<Required<USDTvUSDCOHLVC>>;
         }
         const apiOrders: any[] = res
-            .map(signedOrder => ({
-                signature: signedOrder.signature,
-                senderAddress: signedOrder.senderAddress,
-                makerAddress: signedOrder.makerAddress,
-                takerAddress: signedOrder.takerAddress,
-                makerFee: new BigNumber(signedOrder.makerFee),
-                takerFee: new BigNumber(signedOrder.takerFee),
-                makerAssetAmount: new BigNumber(signedOrder.makerAssetAmount),
-                takerAssetAmount: new BigNumber(signedOrder.takerAssetAmount),
-                makerAssetData: signedOrder.makerAssetData,
-                takerAssetData: signedOrder.takerAssetData,
-                salt: new BigNumber(signedOrder.salt),
-                exchangeAddress: signedOrder.exchangeAddress,
-                feeRecipientAddress: signedOrder.feeRecipientAddress,
-                expirationTimeSeconds: new BigNumber(signedOrder.expirationTimeSeconds),
-                status: signedOrder.status
+            .map(cur => ({
+                dt: cur.dt,
+                avg_price: new BigNumber(cur.avg_price),
+                side: cur.bid_vol == 0 ? 0 : 1,
+                amount: cur.bid_vol == 0 ? new BigNumber(cur.ask_vol) : new BigNumber(cur.bid_vol)
             }))
             .map(signedOrder => ({ metaData: {}, order: signedOrder }));
         const paginatedApiOrderHistory = paginate(apiOrders, page, perPage);
