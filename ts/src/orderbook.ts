@@ -464,9 +464,9 @@ export class OrderBook {
         const apiOrders: any[] = res
             .map(cur => ({
                 dt: cur.dt,
-                avg_price: new BigNumber(cur.avg_price),
+                avg_price: cur.avg_price,
                 side: cur.bid_vol == 0 ? 0 : 1,
-                amount: cur.bid_vol == 0 ? new BigNumber(cur.ask_vol) : new BigNumber(cur.bid_vol)
+                amount: cur.bid_vol == 0 ? cur.ask_vol : cur.bid_vol
             }))
             .map(signedOrder => ({ metaData: {}, order: signedOrder }));
         const paginatedApiOrderHistory = paginate(apiOrders, page, perPage);
