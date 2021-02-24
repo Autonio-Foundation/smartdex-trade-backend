@@ -22,5 +22,8 @@ export const WMATICvUSDCOHLVCEntity = new EntitySchema<USDTvUSDCOHLVC>({
         ask_vol: {
             type: 'int',
         },
+        avg_price: {
+            type: 'int'
+        }
     },
 });

@@ -22,5 +22,8 @@ export const NIOXvUSDCOHLVCEntity = new EntitySchema<NIOXvUSDCOHLVC>({
         ask_vol: {
             type: 'int',
         },
+        avg_price: {
+            type: 'int'
+        }
     },
 });
