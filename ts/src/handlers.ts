@@ -125,7 +125,7 @@ export class Handlers {
         try {
             const params = req.body;
             const dt = new Date();
-            const data = `0~Smartdex~${params.base_token}~${params.quote_token}~ ~ ~${dt.getTime()}~ ~${params.bid}`;
+            const data = `0~Smartdex~${params.base_token}~${params.quote_token}~ ~ ~${dt.getTime()}~ ~${params.bid}~${params.bid_vol+params.ask_vol}`;
             await this._orderBook.addOHLVCAsync({...params, dt});
             myEvent.emit('new:order', data);
         } catch (err) {
