@@ -519,7 +519,7 @@ export class OrderBook {
         res[0].low = ohlvcEntity[0].bid;
         let curId = 0;
         let high = 0;
-        let low = 0;
+        let low = 10000000000000;
         ohlvcEntity.forEach(entity => {
             let id = Math.floor((entity.dt - params_from) / params_interval);
             if (curId != id) {
