@@ -29,6 +29,14 @@ import { WMATICvUSDCOHLVC } from './models/WMATICvUSDCOHLVC';
 import { WMATICvUSDCOrder } from './models/WMATICvUSDCOrder';
 import { USDTvUSDCOHLVC } from './models/USDTvUSDCOHLVC';
 import { USDTvUSDCOrder } from './models/USDTvUSDCOrder';
+
+import { ALOHAvNIOXOHLVC } from './models/ALOHAvNIOXOHLVC';
+import { ALOHAvNIOXOrder } from './models/ALOHAvNIOXOrder';
+import { GLQvWETHOHLVC } from './models/GLQvWETHOHLVC';
+import { GLQvWETHOrder } from './models/GLQvWETHOrder';
+import { WETHvUSDCOHLVC } from './models/WETHvUSDCOHLVC';
+import { WETHvUSDCOrder } from './models/WETHvUSDCOrder';
+
 import { SignedOrderModel } from './models/SignedOrderModel';
 import { paginate } from './paginator';
 import { utils } from './utils';
@@ -217,6 +225,15 @@ export class OrderBook {
         else if (entity.base_token === 'usdt' && entity.quote_token === 'usdc') {
             await connection.manager.save(new USDTvUSDCOHLVC(params));
         }
+        else if (entity.base_token === 'aloha' && entity.quote_token === 'niox') {
+            await connection.manager.save(new ALOHAvNIOXOHLVC(params));
+        }
+        else if (entity.base_token === 'glq' && entity.quote_token === 'weth') {
+            await connection.manager.save(new GLQvWETHOHLVC(params));
+        }
+        else if (entity.base_token === 'weth' && entity.quote_token === 'usdc') {
+            await connection.manager.save(new WETHvUSDCOHLVC(params));
+        }
     }
     public async addOrderAsync(signedOrder: SignedOrder): Promise<void> {
         const connection = getDBConnection();
@@ -363,6 +380,9 @@ export class OrderBook {
             const usdcAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdc);
             const wmaticAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.wmatic);
             const usdtAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.usdt);
+            const alohaAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.aloha);
+            const glqAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.glq);
+            const wethAssetData = assetDataUtils.encodeERC20AssetData(TOKEN_ADDRESSES.weth);
         
             if ((order.makerAssetData === nioxAssetData && order.takerAssetData === usdcAssetData) || 
             (order.makerAssetData === usdcAssetData && order.takerAssetData === nioxAssetData)) {
@@ -388,6 +408,30 @@ export class OrderBook {
                     await connection.manager.save(new USDTvUSDCOrder(serializedOrder));
                 }
             }
+            else if ((order.makerAssetData === alohaAssetData && order.takerAssetData === nioxAssetData) || 
+            (order.makerAssetData === nioxAssetData && order.takerAssetData === alohaAssetData)) {
+                // aloha/niox pair
+                var res = (await connection.manager.find(ALOHAvNIOXOrder, { where: { hash: orderHash} })) as Array<Required<ALOHAvNIOXOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new ALOHAvNIOXOrder(serializedOrder));
+                }
+            }
+            else if ((order.makerAssetData === glqAssetData && order.takerAssetData === wethAssetData) || 
+            (order.makerAssetData === wethAssetData && order.takerAssetData === glqAssetData)) {
+                // glq/weth pair
+                var res = (await connection.manager.find(GLQvWETHOrder, { where: { hash: orderHash} })) as Array<Required<GLQvWETHOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new GLQvWETHOrder(serializedOrder));
+                }
+            }
+            else if ((order.makerAssetData === wethAssetData && order.takerAssetData === usdcAssetData) || 
+            (order.makerAssetData === usdcAssetData && order.takerAssetData === wethAssetData)) {
+                // weth/usdc pair
+                var res = (await connection.manager.find(WETHvUSDCOrder, { where: { hash: orderHash} })) as Array<Required<WETHvUSDCOrder>>;
+                if (res.length == 0) {
+                    await connection.manager.save(new WETHvUSDCOrder(serializedOrder));
+                }
+            }
         }
     }
     public async getOrderHistoryAsync(params: GetOrderHistoryParams): Promise<Array<any>> {
@@ -401,6 +445,15 @@ export class OrderBook {
         }
         else if (params.base_token === 'usdt' && params.quote_token === 'usdc') {
             res = (await connection.manager.find(USDTvUSDCOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<USDTvUSDCOrder>>;
+        }
+        else if (params.base_token === 'aloha' && params.quote_token === 'niox') {
+            res = (await connection.manager.find(ALOHAvNIOXOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<ALOHAvNIOXOrder>>;
+        }
+        else if (params.base_token === 'glq' && params.quote_token === 'weth') {
+            res = (await connection.manager.find(GLQvWETHOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<GLQvWETHOrder>>;
+        }
+        else if (params.base_token === 'weth' && params.quote_token === 'usdc') {
+            res = (await connection.manager.find(WETHvUSDCOrder, { where: { makerAddress: params.address}, order: { salt: "DESC"} })) as Array<Required<WETHvUSDCOrder>>;
         }
         return res;
     }
@@ -426,6 +479,24 @@ export class OrderBook {
                 where: { dt: LessThan(dateNow.getTime()) }, 
                 order: { dt: "DESC"}
             })) as Array<Required<USDTvUSDCOHLVC>>;
+        }
+        else if (params.base_token === 'aloha' && params.quote_token === 'niox') {
+            ohlvcData = (await connection.manager.find(ALOHAvNIOXOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<ALOHAvNIOXOHLVC>>;
+        }
+        else if (params.base_token === 'glq' && params.quote_token === 'weth') {
+            ohlvcData = (await connection.manager.find(GLQvWETHOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<GLQvWETHOHLVC>>;
+        }
+        else if (params.base_token === 'weth' && params.quote_token === 'usdc') {
+            ohlvcData = (await connection.manager.find(WETHvUSDCOHLVC, {
+                where: { dt: LessThan(dateNow.getTime()) }, 
+                order: { dt: "DESC"}
+            })) as Array<Required<WETHvUSDCOHLVC>>;
         }
         if (ohlvcData.length === 0) {
             return {prevPrice: 0};
@@ -460,6 +531,27 @@ export class OrderBook {
                 skip: 0,
                 take: 10
             })) as Array<Required<USDTvUSDCOHLVC>>;
+        }
+        else if (base_token === 'aloha' && quote_token === 'niox') {
+            res = (await connection.manager.find(ALOHAvNIOXOHLVC, {
+                order: { dt: "DESC"},
+                skip: 0,
+                take: 10
+            })) as Array<Required<ALOHAvNIOXOHLVC>>;
+        }
+        else if (base_token === 'glq' && quote_token === 'weth') {
+            res = (await connection.manager.find(GLQvWETHOHLVC, {
+                order: { dt: "DESC"},
+                skip: 0,
+                take: 10
+            })) as Array<Required<GLQvWETHOHLVC>>;
+        }
+        else if (base_token === 'weth' && quote_token === 'usdc') {
+            res = (await connection.manager.find(WETHvUSDCOHLVC, {
+                order: { dt: "DESC"},
+                skip: 0,
+                take: 10
+            })) as Array<Required<WETHvUSDCOHLVC>>;
         }
         const apiOrders: any[] = res
             .map(cur => ({
@@ -496,6 +588,24 @@ export class OrderBook {
                 where: { dt: Between(params_from, params_to) },
                 order: { dt: "ASC"}
             })) as Array<Required<USDTvUSDCOHLVC>>;
+        }
+        else if (params.base_token === 'aloha' && params.quote_token === 'niox') {
+            ohlvcEntity = (await connection.manager.find(ALOHAvNIOXOHLVC, { 
+                where: { dt: Between(params_from, params_to) },
+                order: { dt: "ASC"}
+            })) as Array<Required<ALOHAvNIOXOHLVC>>;
+        }
+        else if (params.base_token === 'glq' && params.quote_token === 'weth') {
+            ohlvcEntity = (await connection.manager.find(GLQvWETHOHLVC, { 
+                where: { dt: Between(params_from, params_to) },
+                order: { dt: "ASC"}
+            })) as Array<Required<GLQvWETHOHLVC>>;
+        }
+        else if (params.base_token === 'weth' && params.quote_token === 'usdc') {
+            ohlvcEntity = (await connection.manager.find(WETHvUSDCOHLVC, { 
+                where: { dt: Between(params_from, params_to) },
+                order: { dt: "ASC"}
+            })) as Array<Required<WETHvUSDCOHLVC>>;
         }
         if (ohlvcEntity.length === 0) {
             return [];

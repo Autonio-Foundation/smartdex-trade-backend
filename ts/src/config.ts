@@ -21,7 +21,10 @@ export const TOKEN_ADDRESSES = {
     'niox': '0xad684e79ce4b6d464f2ff7c3fd51646892e24b96', //niox on matic mainnet 137
     'usdt': '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', //usdt on matic mainnet 137
     'derc20': '0xc2c84b533a9518241e73d525afc89c3c57769e9f', //derc20 on matic mainnet 137
-    'usdc': '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'  //usdc on matic mainnet 137
+    'usdc': '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',  //usdc on matic mainnet 137
+    'aloha': '0x60AC2E84078Ce30CBC68e3d7b18bCF613271ce6B',  //aloha on matic mainnet 137
+    'glq': '0x0CfC9a713A5C17Bc8a5fF0379467f6558bAcD0e0',  //glq on matic mainnet 137
+    'weth': '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'  //weth on matic mainnet 137
 };
 
 // Whitelisted token addresses. Set to a '*' instead of an array to allow all tokens.
@@ -31,7 +34,10 @@ export const WHITELISTED_TOKENS: string[] | '*' = _.isEmpty(process.env.WHITELIS
           '0xad684e79ce4b6d464f2ff7c3fd51646892e24b96', //niox on matic mainnet 137
           '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', //usdt on matic mainnet 137
           '0xc2c84b533a9518241e73d525afc89c3c57769e9f', //derc20 on matic mainnet 137
-          '0x2791bca1f2de4661ed88a30c99a7a9449aa84174' //usdc on matic mainnet 137
+          '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', //usdc on matic mainnet 137
+          '0x60AC2E84078Ce30CBC68e3d7b18bCF613271ce6B',  //aloha on matic mainnet 137
+          '0x0CfC9a713A5C17Bc8a5fF0379467f6558bAcD0e0',  //glq on matic mainnet 137
+          '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'  //weth on matic mainnet 137
       ]
     : assertEnvVarType('WHITELIST_ALL_TOKENS', process.env.WHITELIST_ALL_TOKENS, EnvVarType.WhitelistAllTokens);
 

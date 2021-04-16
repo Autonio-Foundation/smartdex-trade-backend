@@ -1,10 +1,10 @@
 import { EntitySchema } from 'typeorm';
 
-import { WMATICvUSDCOrder } from '../models/WMATICvUSDCOrder';
+import { GLQvWETHOrder } from '../models/GLQvWETHOrder';
 
-export const ALOHAvNIOXOHLVCEntity = new EntitySchema<WMATICvUSDCOrder>({
-    name: 'WMATICvUSDCOrder',
-    target: WMATICvUSDCOrder,
+export const GLQvWETHOrderEntity = new EntitySchema<GLQvWETHOrder>({
+    name: 'GLQvWETHOrder',
+    target: GLQvWETHOrder,
     columns: {
         hash: {
             primary: true,
